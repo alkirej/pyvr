@@ -3,26 +3,21 @@ import time
 import cv2
 from .VideoCard import VideoCard
 
+
 class VideoRecorderSpecs:
     def __init__(self,
-                 device=0,
-                 height: int = 720,
-                 width: int = 1280,
                  fps: int = 30,
                  codec: str = "mp4v"
                  ):
         assert (len(codec) == 4)
-
-        self.device = device
-        self.height = height
-        self.width = width
         self.fps = fps
-        self.codec = codec
+        self.codec = cv2.VideoWriter.fourcc(*codec)
 
 
 class VideoRecorder:
     def __init__(self, filename: str, card: VideoCard, specs: VideoRecorderSpecs = VideoRecorderSpecs()):
-        self.specs = specs
+        self.write_specs = specs
+        self.read_specs = card.specs
         self.start = time.time
         self.written_frames = 0
         self.recording = False
@@ -34,13 +29,16 @@ class VideoRecorder:
         self.time_to_sleep = self.time_per_frame / 5
         self.card = card
 
-        fourcc = cv2.VideoWriter.fourcc(*"mp4v")
-        self.writer = cv2.VideoWriter(filename, fourcc, specs.fps, (specs.width, specs.height))
+        self.writer = cv2.VideoWriter(filename,
+                                      self.write_specs.codec,
+                                      self.write_specs.fps,
+                                      (self.read_specs.width, self.read_specs.height)
+                                      )
 
     def start_recording(self) -> None:
         if not self.recording:
             self.recording = True
-            self.record_thread = threading.Thread(name="file-write", target=self.record)
+            self.record_thread = threading.Thread(name="video-write-thread", target=self.record)
             self.record_thread.start()
 
     def stop_recording(self) -> None:
@@ -74,16 +72,18 @@ class VideoRecorder:
                 self.new_frame_avail = False
                 self.frame_count += 1
             else:
-                raise IOError("Unable to record at", self.specs.fps, "frames/second.")
+                raise IOError("Unable to record at", self.write_specs.fps, "frames/second.")
 
         tm = time.monotonic() - start_time
         calc_fps = round(self.frame_count / tm, 3)
 
-        print("Recorded", self.frame_count, "frames in", round(tm, 1), "seconds. (", calc_fps,")")
+        print("Recorded ", self.frame_count, " frames in ", round(tm, 1), " seconds. (", calc_fps, " frames/second)",
+              sep=""
+              )
         self.writer.release()
 
     def record_next_frame_at(self, start) -> float:
-        return start + self.frame_count / self.specs.fps
+        return start + self.frame_count / self.write_specs.fps
 
     def __enter__(self):
         self.start_recording()

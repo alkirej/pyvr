@@ -1,4 +1,4 @@
-#!/home/jeff/git/v4l2-recorder/bin/python3
+#!/home/jeff/git/v4l2-recorder/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
