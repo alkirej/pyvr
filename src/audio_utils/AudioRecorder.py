@@ -1,13 +1,17 @@
+import pyaudio as pa
 import threading as thr
+import time
+import wave
 
 from .AudioInput import AudioInput
 
 class AudioRecorder:
-    def __init__(self, filename: str, audio_input: AudioInput):
+    def __init__(self, audio_input: AudioInput, filename: str = "recording-output.wav"):
         self.filename = filename
         self.audio_input = audio_input
         self.recording = False
         self.record_thread = None
+        self.time_to_sleep = (self.audio_input.buffer_size/self.audio_input.sample_rate) / 5
 
     def start_recording(self) -> None:
         if not self.recording:
@@ -21,9 +25,20 @@ class AudioRecorder:
             self.record_thread.join()
 
     def record(self) -> None:
+        audio_interface = pa.PyAudio()  # Create an interface to PortAudio
+
+        wav_file = wave.open(self.filename, 'wb')
+        wav_file.setnchannels(self.audio_input.channels)
+        wav_file.setsampwidth(audio_interface.get_sample_size(self.audio_input.sample_size))
+        wav_file.setframerate(self.audio_input.sample_rate)
+
         while self.recording:
-            if self.audio_input.new_audio_sample():
+            if self.audio_input.new_audio_avail():
                 current_audio_splice = self.audio_input.get_latest_audio()
+                wav_file.writeframes(current_audio_splice)
+            time.sleep(self.time_to_sleep)
+
+        wav_file.close()
 
     def __enter__(self):
         self.start_recording()

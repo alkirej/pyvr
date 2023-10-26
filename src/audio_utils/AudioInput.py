@@ -29,10 +29,10 @@ class AudioInput:
         audio_input_device = lookup_device(input_name)
         if audio_input_device is not None:
             self.audio_devices[0] = audio_input_device["index"]
-            self.channels_to_record = audio_input_device["max_input_channels"]
+            self.channels = audio_input_device["max_input_channels"]
             self.sample_rate = int(audio_input_device["default_samplerate"])
         else:
-            self.channels_to_record = 2
+            self.channels = 2
             self.sample_rate = 48000
 
         self.buffer_size = int(split_dur * self.sample_rate)
@@ -47,7 +47,7 @@ class AudioInput:
     def listen(self) -> None:
         audio_interface = pa.PyAudio()  # Create an interface to PortAudio
         audio_stream = audio_interface.open(format=self.sample_size,
-                                            channels=self.channels_to_record,
+                                            channels=self.channels,
                                             rate=self.sample_rate,
                                             frames_per_buffer=self.buffer_size,
                                             input_device_index=self.audio_devices[0],
@@ -64,6 +64,7 @@ class AudioInput:
 
         audio_stream.stop_stream()
         audio_stream.close()
+        audio_interface.terminate()
 
     def new_audio_avail(self) -> bool:
         return self.new_audio_sample
