@@ -1,4 +1,3 @@
-# Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
@@ -47,6 +46,7 @@ autodoc_default_options = {
         "members": True,
         "show-inheritance": True
         }
+autodoc_typehints = "description"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -70,6 +70,14 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'classic'
+html_theme_options = {
+        "sidebarwidth": "25em",
+        "globaltoc_collapse": False,
+        "body_max_width": "100%" 
+        }
+add_module_names = False
+toc_object_entries = "true"
+toc_object_entries_show_parents = "hide"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

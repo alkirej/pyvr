@@ -1,18 +1,22 @@
 video\_utils package
 ====================
 
-Submodules
-----------
+Functions
+---------
 
-video\_utils.VideoCard module
+.. automodule:: video_utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+video\_utils.VideoCard
 -----------------------------
 
-.. automodule:: video_utils.VideoCard
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. module:: video_utils.VideoCard 
 
-video\_utils.VideoRecorder module
+.. autoclass:: VideoCard
+
+video\_utils.VideoRecorder
 ---------------------------------
 
 .. automodule:: video_utils.VideoRecorder
@@ -20,10 +24,3 @@ video\_utils.VideoRecorder module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
-
-.. automodule:: video_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -48,9 +48,13 @@
 
 <span class="kn">import</span> <span class="nn">video_utils</span> <span class="k">as</span> <span class="nn">vu</span>
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../record.html#record.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;recording&quot;</span>
+<span class="n">FILE_NAME</span> <span class="o">=</span> <span class="s2">&quot;recording&quot;</span>
+<span class="n">VIDEO_EXT</span> <span class="o">=</span> <span class="s2">&quot;mp4&quot;</span>
+<span class="n">AUDIO_EXT</span> <span class="o">=</span> <span class="s2">&quot;wav&quot;</span>
+<span class="n">RESULT_EXT</span> <span class="o">=</span> <span class="s2">&quot;mkv&quot;</span>
 
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../record.html#record.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">log</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;pvr.log&quot;</span><span class="p">,</span>
                     <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
                     <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="si">%(filename)15.15s</span><span class="s2"> </span><span class="si">%(funcName)15.15s</span><span class="s2"> </span><span class="si">%(levelname)5.5s</span><span class="s2"> </span><span class="si">%(lineno)4.4s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -60,15 +64,14 @@
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;*** *** *** Begin record program *** *** ***&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">VideoCard</span><span class="p">()</span> <span class="k">as</span> <span class="n">vc</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">VideoRecorder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">,</span> <span class="n">vc</span><span class="p">)</span> <span class="k">as</span> <span class="n">vr</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">VideoRecorder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">VIDEO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vc</span><span class="p">):</span>
             <span class="k">with</span> <span class="n">AudioInput</span><span class="p">(</span><span class="n">input_name</span><span class="o">=</span><span class="s2">&quot;Pyle&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ai</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">AudioRecorder</span><span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.wav&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ar</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">AudioRecorder</span><span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">AUDIO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="n">f</span> <span class="o">=</span> <span class="n">vc</span><span class="o">.</span><span class="n">most_recent_frame</span><span class="p">()</span>
                         <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
                         <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Preview&quot;</span><span class="p">,</span> <span class="n">resized</span><span class="p">)</span>
 
-                        <span class="n">vr</span><span class="o">.</span><span class="n">next_frame</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                         <span class="n">keypress</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">keypress</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span>
                             <span class="k">break</span>
@@ -77,8 +80,16 @@
 
     <span class="n">cv2</span><span class="o">.</span><span class="n">destroyWindow</span><span class="p">(</span><span class="s2">&quot;Preview&quot;</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Combine and compress recording information.&quot;</span><span class="p">)</span>
-    <span class="n">vu</span><span class="o">.</span><span class="n">combine_video_and_audio</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.wav&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.mkv&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Process complete. Results stored in </span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.mkv&quot;</span><span class="p">)</span></div>
+    <span class="n">vu</span><span class="o">.</span><span class="n">combine_video_and_audio</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">VIDEO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">AUDIO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">RESULT_EXT</span><span class="si">}</span><span class="s2">&quot;</span>
+                               <span class="p">)</span>
+    <span class="c1"># delete video and audio files.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">VIDEO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">AUDIO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Process complete. Results stored in </span><span class="si">{</span><span class="n">FILE_NAME</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">RESULT_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 <span class="k">if</span> <span class="s2">&quot;__main__&quot;</span> <span class="o">==</span> <span class="vm">__name__</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>

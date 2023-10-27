@@ -1,3 +1,28 @@
+"""
+.. py:module:: VideoCard
+
+A VideoCard object will start a thread that will monitor the video stream
+of a linux video device. It is designed to work with a with clause as shown
+below.
+
+Example Code:
+=============
+
+.. code-block:: python
+
+    import cv2
+    from video_utils.VideoCard import VideoCard
+
+    with VideoCard() as vc:
+        while True:
+            f = vc.most_recent_frame()
+            cv2.imshow("Preview", f)
+
+            keypress = cv2.waitKey(1)
+            if keypress & 0xFF == ord('q'):
+                break
+            time.sleep(1)
+"""
 from collections import namedtuple
 from typing import Self
 
@@ -66,7 +91,7 @@ class VideoCard:
             if valid:
                 self.latest_frame = frame
 
-    def most_recent_frame(self) -> None:
+    def most_recent_frame(self) -> bytes:
         """Get the most recently captured frame from the video capture device.  Used to
         view or record the contents of the video stream.
 

@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="record module" href="record.html" />
-    <link rel="prev" title="Welcome to src’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to Python Video Recorder’s documentation!" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -33,7 +33,7 @@
           <a href="record.html" title="record module"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to src’s documentation!"
+          <a href="index.html" title="Welcome to Python Video Recorder’s documentation!"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Python Video Recorder  documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">audio_utils package</a></li> 
@@ -54,61 +54,129 @@
 <span id="audio-utils-audioinput-module"></span><h2>audio_utils.AudioInput module<a class="headerlink" href="#module-audio_utils.AudioInput" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.AudioInput">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">audio_utils.AudioInput.</span></span><span class="sig-name descname"><span class="pre">AudioInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Pyle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_dur</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AudioInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Pyle'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_dur</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_name</strong> (<em>str</em>) – </p></li>
+<li><p><strong>split_dur</strong> (<em>int</em>) – </p></li>
+<li><p><strong>sample_size</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.AudioInput.get_latest_audio">
-<span class="sig-name descname"><span class="pre">get_latest_audio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.get_latest_audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.get_latest_audio" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">get_latest_audio</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.get_latest_audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.get_latest_audio" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bytes</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.AudioInput.listen">
-<span class="sig-name descname"><span class="pre">listen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.listen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.listen" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">listen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.listen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.listen" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.AudioInput.new_audio_avail">
-<span class="sig-name descname"><span class="pre">new_audio_avail</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.new_audio_avail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.new_audio_avail" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">new_audio_avail</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.new_audio_avail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.new_audio_avail" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.AudioInput.start_listening">
-<span class="sig-name descname"><span class="pre">start_listening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.start_listening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.start_listening" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">start_listening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.start_listening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.start_listening" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.AudioInput.stop_listening">
-<span class="sig-name descname"><span class="pre">stop_listening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.stop_listening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.stop_listening" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">stop_listening</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#AudioInput.stop_listening"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.AudioInput.stop_listening" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="audio_utils.AudioInput.lookup_device">
-<span class="sig-prename descclassname"><span class="pre">audio_utils.AudioInput.</span></span><span class="sig-name descname"><span class="pre">lookup_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#lookup_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.lookup_device" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">lookup_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioInput.html#lookup_device"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioInput.lookup_device" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – </p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict | None</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 <section id="module-audio_utils.AudioRecorder">
 <span id="audio-utils-audiorecorder-module"></span><h2>audio_utils.AudioRecorder module<a class="headerlink" href="#module-audio_utils.AudioRecorder" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="audio_utils.AudioRecorder.AudioRecorder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">audio_utils.AudioRecorder.</span></span><span class="sig-name descname"><span class="pre">AudioRecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#audio_utils.AudioInput.AudioInput" title="audio_utils.AudioInput.AudioInput"><span class="pre">audio_utils.AudioInput.AudioInput</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AudioRecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">audio_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>audio_input</strong> (<a class="reference internal" href="#audio_utils.AudioInput.AudioInput" title="audio_utils.AudioInput.AudioInput"><em>audio_utils.AudioInput.AudioInput</em></a>) – </p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioRecorder.AudioRecorder.record">
-<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder.record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder.record" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder.record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder.record" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioRecorder.AudioRecorder.start_recording">
-<span class="sig-name descname"><span class="pre">start_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder.start_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder.start_recording" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">start_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder.start_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder.start_recording" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="audio_utils.AudioRecorder.AudioRecorder.stop_recording">
-<span class="sig-name descname"><span class="pre">stop_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder.stop_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder.stop_recording" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">stop_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/audio_utils/AudioRecorder.html#AudioRecorder.stop_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audio_utils.AudioRecorder.AudioRecorder.stop_recording" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -138,7 +206,7 @@
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to src’s documentation!</a></p>
+                        title="previous chapter">Welcome to Python Video Recorder’s documentation!</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="record.html"
                         title="next chapter">record module</a></p>
@@ -176,7 +244,7 @@
           <a href="record.html" title="record module"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to src’s documentation!"
+          <a href="index.html" title="Welcome to Python Video Recorder’s documentation!"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Python Video Recorder  documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">audio_utils package</a></li> 

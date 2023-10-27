@@ -39,7 +39,32 @@
           <div class="body" role="main">
             
   <h1>Source code for video_utils.VideoCard</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. py:module:: VideoCard</span>
+
+<span class="sd">A VideoCard object will start a thread that will monitor the video stream</span>
+<span class="sd">of a linux video device. It is designed to work with a with clause as shown</span>
+<span class="sd">below.</span>
+
+<span class="sd">Example Code:</span>
+<span class="sd">=============</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    import cv2</span>
+<span class="sd">    from video_utils.VideoCard import VideoCard</span>
+
+<span class="sd">    with VideoCard() as vc:</span>
+<span class="sd">        while True:</span>
+<span class="sd">            f = vc.most_recent_frame()</span>
+<span class="sd">            cv2.imshow(&quot;Preview&quot;, f)</span>
+
+<span class="sd">            keypress = cv2.waitKey(1)</span>
+<span class="sd">            if keypress &amp; 0xFF == ord(&#39;q&#39;):</span>
+<span class="sd">                break</span>
+<span class="sd">            time.sleep(1)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
 
 <span class="kn">import</span> <span class="nn">cv2</span>
@@ -107,7 +132,7 @@
             <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">latest_frame</span> <span class="o">=</span> <span class="n">frame</span></div>
 
-<div class="viewcode-block" id="VideoCard.most_recent_frame"><a class="viewcode-back" href="../../video_utils.html#video_utils.VideoCard.VideoCard.most_recent_frame">[docs]</a>    <span class="k">def</span> <span class="nf">most_recent_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="VideoCard.most_recent_frame"><a class="viewcode-back" href="../../video_utils.html#video_utils.VideoCard.VideoCard.most_recent_frame">[docs]</a>    <span class="k">def</span> <span class="nf">most_recent_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get the most recently captured frame from the video capture device.  Used to</span>
 <span class="sd">        view or record the contents of the video stream.</span>
 
