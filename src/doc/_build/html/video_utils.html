@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>video_utils package &#8212; Python Video Recorder  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/classic.css" />
+    
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="record module" href="record.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="record.html" title="record module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python Video Recorder  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">video_utils package</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="video-utils-package">
+<h1>video_utils package<a class="headerlink" href="#video-utils-package" title="Permalink to this headline">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="module-video_utils.VideoCard">
+<span id="video-utils-videocard-module"></span><h2>video_utils.VideoCard module<a class="headerlink" href="#module-video_utils.VideoCard" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoCard">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">video_utils.VideoCard.</span></span><span class="sig-name descname"><span class="pre">VideoCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#video_utils.VideoCard.VideoReadSpecs" title="video_utils.VideoCard.VideoReadSpecs"><span class="pre">video_utils.VideoCard.VideoReadSpecs</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">VideoReadSpecs(device='/dev/video0',</span> <span class="pre">height=720,</span> <span class="pre">width=1280)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/video_utils/VideoCard.html#VideoCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoCard.VideoCard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to interact with a web-camera or other recording device.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoCard.frame_loader">
+<span class="sig-name descname"><span class="pre">frame_loader</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils/VideoCard.html#VideoCard.frame_loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoCard.VideoCard.frame_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Code executed by the video-capture-thread. Constantly examine the video from the
+card and store it locally.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoCard.most_recent_frame">
+<span class="sig-name descname"><span class="pre">most_recent_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils/VideoCard.html#VideoCard.most_recent_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoCard.VideoCard.most_recent_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the most recently captured frame from the video capture device.  Used to
+view or record the contents of the video stream.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>bytes: binary image as captured by the video capture device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoCard.start_viewing">
+<span class="sig-name descname"><span class="pre">start_viewing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils/VideoCard.html#VideoCard.start_viewing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoCard.VideoCard.start_viewing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start monitoring this device and storing the video images locally.  This will
+start a thread devoted to the process and then return.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoCard.stop_viewing">
+<span class="sig-name descname"><span class="pre">stop_viewing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils/VideoCard.html#VideoCard.stop_viewing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoCard.VideoCard.stop_viewing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete the monitoring of video capture device.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoReadSpecs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">video_utils.VideoCard.</span></span><span class="sig-name descname"><span class="pre">VideoReadSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#video_utils.VideoCard.VideoReadSpecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoReadSpecs.device">
+<span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#video_utils.VideoCard.VideoReadSpecs.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoReadSpecs.height">
+<span class="sig-name descname"><span class="pre">height</span></span><a class="headerlink" href="#video_utils.VideoCard.VideoReadSpecs.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="video_utils.VideoCard.VideoReadSpecs.width">
+<span class="sig-name descname"><span class="pre">width</span></span><a class="headerlink" href="#video_utils.VideoCard.VideoReadSpecs.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-video_utils.VideoRecorder">
+<span id="video-utils-videorecorder-module"></span><h2>video_utils.VideoRecorder module<a class="headerlink" href="#module-video_utils.VideoRecorder" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">video_utils.VideoRecorder.</span></span><span class="sig-name descname"><span class="pre">VideoRecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card:</span> <span class="pre">video_utils.VideoCard.VideoCard</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specs:</span> <span class="pre">video_utils.VideoRecorder.VideoRecorderSpecs</span> <span class="pre">=</span> <span class="pre">&lt;video_utils.VideoRecorder.VideoRecorderSpecs</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder.next_frame">
+<span class="sig-name descname"><span class="pre">next_frame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder.next_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder.next_frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder.ready_for_new_frame">
+<span class="sig-name descname"><span class="pre">ready_for_new_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder.ready_for_new_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder.ready_for_new_frame" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder.record">
+<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder.record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder.record" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder.record_next_frame_at">
+<span class="sig-name descname"><span class="pre">record_next_frame_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder.record_next_frame_at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder.record_next_frame_at" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder.start_recording">
+<span class="sig-name descname"><span class="pre">start_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder.start_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder.start_recording" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorder.stop_recording">
+<span class="sig-name descname"><span class="pre">stop_recording</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorder.stop_recording"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorder.stop_recording" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="video_utils.VideoRecorder.VideoRecorderSpecs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">video_utils.VideoRecorder.</span></span><span class="sig-name descname"><span class="pre">VideoRecorderSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'mp4v'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/video_utils/VideoRecorder.html#VideoRecorderSpecs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.VideoRecorder.VideoRecorderSpecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-video_utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-video_utils" title="Permalink to this headline">¶</a></h2>
+<p>Classes to capture and record video data supplied via a video input device.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="video_utils.combine_video_and_audio">
+<span class="sig-prename descclassname"><span class="pre">video_utils.</span></span><span class="sig-name descname"><span class="pre">combine_video_and_audio</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">video_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audio_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resulting_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/video_utils.html#combine_video_and_audio"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#video_utils.combine_video_and_audio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Routine to combine a video file (with no audio) and an audio file into a single
+file using the H.265 codec creating a that is as small as possible without losing
+its quality.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">video_utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-video_utils.VideoCard">video_utils.VideoCard module</a></li>
+<li><a class="reference internal" href="#module-video_utils.VideoRecorder">video_utils.VideoRecorder module</a></li>
+<li><a class="reference internal" href="#module-video_utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="record.html"
+                        title="previous chapter">record module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/video_utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="record.html" title="record module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python Video Recorder  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">video_utils package</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Jeffery Alkire.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
+    </div>
+  </body>
+</html>

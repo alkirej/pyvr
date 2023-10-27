@@ -8,7 +8,9 @@ from .AudioInput import AudioInput
 
 
 class AudioRecorder:
-    def __init__(self, audio_input: AudioInput, filename: str = "recording-output.wav"):
+    def __init__(self, audio_input: AudioInput, filename: str):
+        assert filename.endswith(".wav")
+
         log.info("Setup audio recorder.")
         self.filename = filename
         self.audio_input = audio_input

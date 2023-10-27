@@ -18,6 +18,8 @@ class VideoRecorderSpecs:
 
 class VideoRecorder:
     def __init__(self, filename: str, card: VideoCard, specs: VideoRecorderSpecs = VideoRecorderSpecs()):
+        assert filename.endswith(".mp4")
+
         log.info("Setup video recorder.")
         self.write_specs = specs
         self.read_specs = card.specs
@@ -31,11 +33,12 @@ class VideoRecorder:
         self.time_per_frame = 1 / specs.fps
         self.time_to_sleep = self.time_per_frame / 5
         self.card = card
+        self.filename = filename
 
         log.debug(f"    - codec = {self.write_specs.codec}")
         log.debug(f"    - fps   = {self.write_specs.fps}")
         log.debug(f"    - size  = {self.read_specs.width} x {self.read_specs.height}")
-        self.writer = cv2.VideoWriter(filename,
+        self.writer = cv2.VideoWriter(self.filename,
                                       self.write_specs.codec,
                                       self.write_specs.fps,
                                       (self.read_specs.width, self.read_specs.height)

@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>audio_utils.AudioRecorder &#8212; Python Video Recorder  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Python Video Recorder  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">audio_utils.AudioRecorder</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for audio_utils.AudioRecorder</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
+<span class="kn">import</span> <span class="nn">pyaudio</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">import</span> <span class="nn">threading</span> <span class="k">as</span> <span class="nn">thr</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">wave</span>
+
+<span class="kn">from</span> <span class="nn">.AudioInput</span> <span class="kn">import</span> <span class="n">AudioInput</span>
+
+
+<div class="viewcode-block" id="AudioRecorder"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioRecorder.AudioRecorder">[docs]</a><span class="k">class</span> <span class="nc">AudioRecorder</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio_input</span><span class="p">:</span> <span class="n">AudioInput</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.wav&quot;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setup audio recorder.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span> <span class="o">=</span> <span class="n">audio_input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_to_sleep</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">buffer_size</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - Audio output sent to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AudioRecorder.start_recording"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioRecorder.AudioRecorder.start_recording">[docs]</a>    <span class="k">def</span> <span class="nf">start_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting audio recording.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span> <span class="o">=</span> <span class="n">thr</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;audio-write-thread&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AudioRecorder.stop_recording"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioRecorder.AudioRecorder.stop_recording">[docs]</a>    <span class="k">def</span> <span class="nf">stop_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping audio recording.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AudioRecorder.record"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioRecorder.AudioRecorder.record">[docs]</a>    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;audio-write-thread has started.&quot;</span><span class="p">)</span>
+        <span class="n">audio_interface</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">PyAudio</span><span class="p">()</span>  <span class="c1"># Create an interface to PortAudio</span>
+
+        <span class="n">wav_file</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">wav_file</span><span class="o">.</span><span class="n">setnchannels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span>
+        <span class="n">wav_file</span><span class="o">.</span><span class="n">setsampwidth</span><span class="p">(</span><span class="n">audio_interface</span><span class="o">.</span><span class="n">get_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_size</span><span class="p">))</span>
+        <span class="n">wav_file</span><span class="o">.</span><span class="n">setframerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">new_audio_avail</span><span class="p">():</span>
+                <span class="n">current_audio_splice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">get_latest_audio</span><span class="p">()</span>
+                <span class="n">wav_file</span><span class="o">.</span><span class="n">writeframes</span><span class="p">(</span><span class="n">current_audio_splice</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_to_sleep</span><span class="p">)</span>
+
+        <span class="n">wav_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="kc">None</span></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Python Video Recorder  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">audio_utils.AudioRecorder</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2023, Jeffery Alkire.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
+    </div>
+  </body>
+</html>
