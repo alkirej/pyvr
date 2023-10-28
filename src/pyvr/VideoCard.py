@@ -1,6 +1,4 @@
 """
-.. py:module:: VideoCard
-
 A VideoCard object will start a thread that will monitor the video stream
 of a linux video device. It is designed to work with a with clause as shown
 below.
@@ -84,7 +82,6 @@ class VideoCard:
         Returns:
             None
         """
-
         log.info("video-capture-thread has started.")
         while self.viewing:
             valid, frame = self.vid_source.read()
@@ -98,7 +95,6 @@ class VideoCard:
         Returns:
             bytes: binary image as captured by the video capture device.
         """
-
         return self.latest_frame
 
     def stop_viewing(self) -> None:
@@ -107,7 +103,6 @@ class VideoCard:
         Returns:
             None
         """
-
         log.info("Ending video capture.")
         if self.viewing:
             self.viewing = False
@@ -116,7 +111,6 @@ class VideoCard:
 
     def __enter__(self) -> Self:
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-
         self.start_viewing()
         return self
 

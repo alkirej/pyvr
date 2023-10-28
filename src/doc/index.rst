@@ -1,18 +1,16 @@
-.. src documentation master file, created by
-   sphinx-quickstart on Thu Oct 26 22:28:00 2023.
+.. pyvr documentation master file, created by
+   sphinx-quickstart on Fri Oct 27 16:31:39 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Python Video Recorder's documentation!
-===================================================
+Python Video Recorder (pyvr)
+============================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Contents:
 
-   audio_utils
-   record
-   video_utils
+   pyvr
 
 
 Indices and tables

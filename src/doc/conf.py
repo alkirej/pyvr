@@ -13,16 +13,8 @@ import os
 import sys
 
 # del sys.path[:]
-sys.path = ['/home/jeff/git/v4l2-recorder/src', 
-            '/home/jeff/git/v4l2-recorder/lib/python3.11/site-packages', 
-            '/usr/share/sphinx/scripts/python3', 
-            '/usr/lib/python311.zip', 
-            '/usr/lib/python3.11', 
-            '/usr/lib/python3.11/lib-dynload', 
-            '/usr/local/lib/python3.11/dist-packages', 
-            '/usr/lib/python3/dist-packages'
-            ]
-print(sys.path)
+sys.path.insert(0, '/home/jeff/git/v4l2-recorder/src')
+sys.path.insert(0, '/home/jeff/git/v4l2-recorder/lib/python3.11/site-packages')
 
 
 # -- Project information -----------------------------------------------------
@@ -75,8 +67,11 @@ html_theme_options = {
         "globaltoc_collapse": False,
         "body_max_width": "100%" 
         }
+html_css_files = [
+        "pyvr.css"
+        ]
 add_module_names = False
-toc_object_entries = "true"
+toc_object_entries = True
 toc_object_entries_show_parents = "hide"
 
 # Add any paths that contain custom static files (such as style sheets) here,

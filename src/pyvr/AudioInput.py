@@ -2,11 +2,9 @@ import logging as log
 import pyaudio as pa
 import sounddevice as sd
 import threading as thr
-
 import time
 
 from typing import Self
-
 
 def lookup_device(name: str) -> dict | None:
     try:

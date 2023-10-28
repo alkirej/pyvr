@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>audio_utils.AudioInput &#8212; Python Video Recorder  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    <title>pyvr.AudioInput &#8212; Python Video Recorder  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=aa81f33d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=b4431309" />
     
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -27,8 +26,9 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">Python Video Recorder  documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">audio_utils.AudioInput</a></li> 
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pyvr.html" accesskey="U">pyvr</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pyvr.AudioInput</a></li> 
       </ul>
     </div>  
 
@@ -37,27 +37,27 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <h1>Source code for audio_utils.AudioInput</h1><div class="highlight"><pre>
+  <h1>Source code for pyvr.AudioInput</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
 <span class="kn">import</span> <span class="nn">pyaudio</span> <span class="k">as</span> <span class="nn">pa</span>
 <span class="kn">import</span> <span class="nn">sounddevice</span> <span class="k">as</span> <span class="nn">sd</span>
 <span class="kn">import</span> <span class="nn">threading</span> <span class="k">as</span> <span class="nn">thr</span>
-
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
 
-
-<div class="viewcode-block" id="lookup_device"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.lookup_device">[docs]</a><span class="k">def</span> <span class="nf">lookup_device</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">lookup_device</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">sd</span><span class="o">.</span><span class="n">query_devices</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">ve</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="AudioInput"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.AudioInput">[docs]</a><span class="k">class</span> <span class="nc">AudioInput</span><span class="p">:</span>
+<div class="viewcode-block" id="AudioInput">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput">[docs]</a>
+<span class="k">class</span> <span class="nc">AudioInput</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Pyle&quot;</span><span class="p">,</span> <span class="n">split_dur</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">paInt16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up audio input device configuration parameters.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">listening</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -86,7 +86,9 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - sample_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - buffer_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="AudioInput.start_listening"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.AudioInput.start_listening">[docs]</a>    <span class="k">def</span> <span class="nf">start_listening</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="AudioInput.start_listening">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.start_listening">[docs]</a>
+    <span class="k">def</span> <span class="nf">start_listening</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting audio capture.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">listening</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">listening</span> <span class="o">=</span> <span class="kc">True</span>
@@ -94,7 +96,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">listen_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AudioInput.listen"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.AudioInput.listen">[docs]</a>    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AudioInput.listen">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.listen">[docs]</a>
+    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;audio-capture-thread has started.&quot;</span><span class="p">)</span>
         <span class="n">audio_interface</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">PyAudio</span><span class="p">()</span>  <span class="c1"># Create an interface to PortAudio</span>
         <span class="n">audio_stream</span> <span class="o">=</span> <span class="n">audio_interface</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
@@ -119,19 +124,29 @@
         <span class="n">audio_stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">audio_interface</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="AudioInput.new_audio_avail"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.AudioInput.new_audio_avail">[docs]</a>    <span class="k">def</span> <span class="nf">new_audio_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AudioInput.new_audio_avail">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.new_audio_avail">[docs]</a>
+    <span class="k">def</span> <span class="nf">new_audio_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_audio_sample</span></div>
 
-<div class="viewcode-block" id="AudioInput.get_latest_audio"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.AudioInput.get_latest_audio">[docs]</a>    <span class="k">def</span> <span class="nf">get_latest_audio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AudioInput.get_latest_audio">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.get_latest_audio">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_latest_audio</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">return_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">latest_audio</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_audio_sample</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">return_val</span></div>
 
-<div class="viewcode-block" id="AudioInput.stop_listening"><a class="viewcode-back" href="../../audio_utils.html#audio_utils.AudioInput.AudioInput.stop_listening">[docs]</a>    <span class="k">def</span> <span class="nf">stop_listening</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="AudioInput.stop_listening">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.stop_listening">[docs]</a>
+    <span class="k">def</span> <span class="nf">stop_listening</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ending audio capture.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">listening</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">listening</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">listen_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_listening</span><span class="p">()</span>
@@ -140,6 +155,7 @@
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_listening</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
 </pre></div>
 
             <div class="clearer"></div>
@@ -157,7 +173,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -173,12 +189,13 @@
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">Python Video Recorder  documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">audio_utils.AudioInput</a></li> 
+          <li class="nav-item nav-item-2"><a href="../pyvr.html" >pyvr</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">pyvr.AudioInput</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2023, Jeffery Alkire.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.2.
+    &#169; Copyright 2023, Jeffery Alkire.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>
