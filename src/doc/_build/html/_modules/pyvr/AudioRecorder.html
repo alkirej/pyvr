@@ -7,7 +7,7 @@
     <title>pyvr.AudioRecorder &#8212; Python Video Recorder  documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=aa81f33d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=b4431309" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=8815e9bf" />
     
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
@@ -38,7 +38,17 @@
           <div class="body" role="main">
             
   <h1>Source code for pyvr.AudioRecorder</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. RAW:: html</span>
+
+<span class="sd">    &lt;h3 class=&quot;cls_header&quot;&gt;AudioRecorder&lt;/h3&gt;</span>
+<span class="sd">    &lt;div class=&quot;highlight cls_author&quot;&gt;</span>
+<span class="sd">        &lt;pre&gt;</span>
+<span class="sd">        Author: Jeffery Alkire</span>
+<span class="sd">        Date:   October 2023&lt;/pre&gt;</span>
+<span class="sd">    &lt;/div&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
 <span class="kn">import</span> <span class="nn">pyaudio</span> <span class="k">as</span> <span class="nn">pa</span>
 <span class="kn">import</span> <span class="nn">threading</span> <span class="k">as</span> <span class="nn">thr</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -50,7 +60,23 @@
 <div class="viewcode-block" id="AudioRecorder">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioRecorder.AudioRecorder">[docs]</a>
 <span class="k">class</span> <span class="nc">AudioRecorder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An AudioRecorder object will start a thread that will monitor and record</span>
+<span class="sd">    chunks of audio frames supplied by a</span>
+<span class="sd">    :py:class:`AudioInput&lt;pyvr.AudioInput.AudioInput&gt;`</span>
+<span class="sd">    object.</span>
+
+<span class="sd">    .. SEEALSO:: Code snippet from :py:func:`record(...)&lt;pyvr.record&gt;`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AudioRecorder.__init__">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.AudioRecorder.AudioRecorder.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">audio_input</span><span class="p">:</span> <span class="n">AudioInput</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: AudioRecorder constructor</span>
+<span class="sd">        :param audio_input:</span>
+<span class="sd">        :param filename:    Filename used to store audio recording.  Currently only</span>
+<span class="sd">                            .wav files are supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.wav&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setup audio recorder.&quot;</span><span class="p">)</span>
@@ -60,11 +86,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_to_sleep</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">buffer_size</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - Audio output sent to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - Audio output sent to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="AudioRecorder.start_recording">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioRecorder.AudioRecorder.start_recording">[docs]</a>
     <span class="k">def</span> <span class="nf">start_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Start a new thread and use it to record (write to disk) the audio</span>
+<span class="sd">                data retreived from the AudioInput object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting audio recording.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">True</span>
@@ -75,6 +106,9 @@
 <div class="viewcode-block" id="AudioRecorder.stop_recording">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioRecorder.AudioRecorder.stop_recording">[docs]</a>
     <span class="k">def</span> <span class="nf">stop_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Complete recording and stop the thread doing it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping audio recording.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
@@ -84,6 +118,11 @@
 <div class="viewcode-block" id="AudioRecorder.record">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioRecorder.AudioRecorder.record">[docs]</a>
     <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Routine run from the AudioRecorder&#39;s thread. This thread monitors</span>
+<span class="sd">                the status of the AudioInput device and saves the audio data as</span>
+<span class="sd">                it becomes available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;audio-write-thread has started.&quot;</span><span class="p">)</span>
         <span class="n">audio_interface</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">PyAudio</span><span class="p">()</span>  <span class="c1"># Create an interface to PortAudio</span>
 
@@ -102,10 +141,12 @@
 
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; __enter__ and __exit__ allow objects of this class to use the with notation.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; __enter__ and __exit__ allow objects of this class to use the with notation.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="kc">None</span></div>
 

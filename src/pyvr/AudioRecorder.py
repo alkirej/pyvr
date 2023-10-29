@@ -1,3 +1,13 @@
+"""
+.. RAW:: html
+
+    <h3 class="cls_header">AudioRecorder</h3>
+    <div class="highlight cls_author">
+        <pre>
+        Author: Jeffery Alkire
+        Date:   October 2023</pre>
+    </div>
+"""
 import logging as log
 import pyaudio as pa
 import threading as thr
@@ -8,7 +18,21 @@ from .AudioInput import AudioInput
 
 
 class AudioRecorder:
+    """
+    An AudioRecorder object will start a thread that will monitor and record
+    chunks of audio frames supplied by a
+    :py:class:`AudioInput<pyvr.AudioInput.AudioInput>`
+    object.
+
+    .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
+    """
     def __init__(self, audio_input: AudioInput, filename: str):
+        """
+        :about: AudioRecorder constructor
+        :param audio_input:
+        :param filename:    Filename used to store audio recording.  Currently only
+                            .wav files are supported.
+        """
         assert filename.endswith(".wav")
 
         log.info("Setup audio recorder.")
@@ -21,6 +45,10 @@ class AudioRecorder:
         log.debug(f"    - Audio output sent to {self.filename}")
 
     def start_recording(self) -> None:
+        """
+        :about: Start a new thread and use it to record (write to disk) the audio
+                data retreived from the AudioInput object.
+        """
         log.info("Starting audio recording.")
         if not self.recording:
             self.recording = True
@@ -28,12 +56,20 @@ class AudioRecorder:
             self.record_thread.start()
 
     def stop_recording(self) -> None:
+        """
+        :about: Complete recording and stop the thread doing it.
+        """
         log.info("Stopping audio recording.")
         if self.recording:
             self.recording = False
             self.record_thread.join()
 
     def record(self) -> None:
+        """
+        :about: Routine run from the AudioRecorder's thread. This thread monitors
+                the status of the AudioInput device and saves the audio data as
+                it becomes available.
+        """
         log.info("audio-write-thread has started.")
         audio_interface = pa.PyAudio()  # Create an interface to PortAudio
 
@@ -51,9 +87,11 @@ class AudioRecorder:
         wav_file.close()
 
     def __enter__(self):
+        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.start_recording()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_traceback):
+        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.stop_recording()
         return exc_type is None

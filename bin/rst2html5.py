@@ -1,4 +1,4 @@
-#!/home/jeff/git/v4l2-recorder/bin/python
+#!/home/jeff/git/v4l2-recorder/bin/python3.11
 # :Copyright: © 2015 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:
 #

@@ -1,3 +1,13 @@
+"""
+.. RAW:: html
+
+    <h3 class="cls_header">VideoRecorder</h3>
+    <div class="highlight cls_author">
+        <pre>
+        Author: Jeffery Alkire
+        Date:   October 2023</pre>
+    </div>
+"""
 import cv2
 import logging as log
 import time
@@ -7,17 +17,42 @@ from .VideoCard import VideoCard
 
 
 class VideoRecorderSpecs:
+    """
+    Class used to pass relevant settings to the
+    :py:class:`VideoRecorder<pyvr.VideoRecorder.VideoRecorder>`
+    object so that it can properly record the video to disk.
+    """
     def __init__(self,
                  fps: int = 30,
                  codec: str = "mp4v"
                  ):
+        """
+        :about: VideoRecorderSpecs constructor
+        :param fps:   frames to record during each second.
+        :param codec: Codec to use while recording.
+        """
         assert (len(codec) == 4)
         self.fps = fps
         self.codec = cv2.VideoWriter.fourcc(*codec)
 
 
 class VideoRecorder:
-    def __init__(self, filename: str, card: VideoCard, specs: VideoRecorderSpecs = VideoRecorderSpecs()):
+    """
+    A VideoRecorder object will start a thread that will monitor and record
+    video frames supplied by
+    :py:class:`VideoCard<pyvr.VideoCard.VideoCard>`
+
+    .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
+    """
+    def __init__(self, filename: str, card: VideoCard, specs: VideoRecorderSpecs = VideoRecorderSpecs()) -> None:
+        """
+        :about: VideoRecorder constructor
+        :param filename: filename (currently must end with .mp4) to record video to.
+        :param card:  object used to retrieve the video frames from the hardware.
+        :param specs: setup parameters for this recorder object.  Things like the codec to
+                      use to record (only "mp4v" currently supported) the video and the
+                      speed (fps) to record at.
+        """
         assert filename.endswith(".mp4")
 
         log.info("Setup video recorder.")
@@ -45,6 +80,10 @@ class VideoRecorder:
                                       )
 
     def start_recording(self) -> None:
+        """
+        :about: Start a new thread and use it to record (write to disk) the video
+                frames retreived from the VideoCard
+        """
         log.info("Starting video recording.")
         if not self.recording:
             self.recording = True
@@ -52,15 +91,29 @@ class VideoRecorder:
             self.record_thread.start()
 
     def stop_recording(self) -> None:
+        """
+        :about: Complete recording and stop the thread doing it.
+        """
         log.info("Stopping video recording.")
         if self.recording:
             self.recording = False
             self.record_thread.join()
 
     def ready_for_new_frame(self) -> bool:
+        """
+        :about: determine if the recorder is able to store the next video frame.
+        """
         return not self.new_frame_avail
 
-    def next_frame(self, frame) -> bool:
+    def next_frame(self, frame: bytes) -> bool:
+        """
+        :about: get a copy of the next frame to be saved to disk.
+        :note:  The frame is only cached at this point.  It will be saved to disk only
+                when it is time (based on the fps).  This insures the recording is taken
+                at the correct speed.
+        :returns: Return TRUE if the next frame was accepted and FALSE if it is too
+                  soon.
+        """
         if self.ready_for_new_frame():
             self.frame = frame
             self.new_frame_avail = True
@@ -68,7 +121,14 @@ class VideoRecorder:
 
         return False
 
-    def record(self):
+    def record(self) -> None:
+        """
+        :about: Routine run from the VideoRecorder's thread. This thread monitors
+                the passage of time recording the proper number of frames each
+                second.
+        :note:  A log entry is written at the conclusion of recording indicating
+                the speed of the recording.
+        """
         log.info("video-write-thread has started.")
         time.sleep(0.05)
         start_time = time.monotonic()
@@ -94,13 +154,21 @@ class VideoRecorder:
         log.info(f"Recorded {self.frame_count} frames in {round(tm, 1)} seconds. ({calc_fps} frames/second)")
         self.writer.release()
 
-    def record_next_frame_at(self, start) -> float:
+    def record_next_frame_at(self, start: float) -> float:
+        """
+        :about: Determine the time the next frame should be recorded.
+        :param start: the time the video recording began (in seconds)
+        :returns: the results of a simple calculation of the time the
+                  next frame should be saved. (in seconds)
+        """
         return start + self.frame_count / self.write_specs.fps
 
     def __enter__(self):
+        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.start_recording()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_traceback):
+        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.stop_recording()
         return exc_type is None

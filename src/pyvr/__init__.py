@@ -4,7 +4,6 @@ Routines that can be used to simplify or remove the interaction with the classes
 import cv2
 import logging as log
 import os
-import sounddevice as sd
 import time
 
 from ffmpeg import FFmpeg

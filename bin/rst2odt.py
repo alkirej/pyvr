@@ -1,4 +1,4 @@
-#!/home/jeff/git/v4l2-recorder/bin/python
+#!/home/jeff/git/v4l2-recorder/bin/python3.11
 
 # $Id: rst2odt.py 9115 2022-07-28 17:06:24Z milde $
 # Author: Dave Kuhlman <dkuhlman@rexx.com>

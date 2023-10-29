@@ -9,6 +9,7 @@ Python Video Recorder (pyvr)
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :titlesonly:
 
    pyvr
 

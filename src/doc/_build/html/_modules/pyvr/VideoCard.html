@@ -7,7 +7,7 @@
     <title>pyvr.VideoCard &#8212; Python Video Recorder  documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=aa81f33d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=b4431309" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=8815e9bf" />
     
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
@@ -39,27 +39,14 @@
             
   <h1>Source code for pyvr.VideoCard</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">A VideoCard object will start a thread that will monitor the video stream</span>
-<span class="sd">of a linux video device. It is designed to work with a with clause as shown</span>
-<span class="sd">below.</span>
+<span class="sd">.. RAW:: html</span>
 
-<span class="sd">Example Code:</span>
-<span class="sd">=============</span>
-
-<span class="sd">.. code-block:: python</span>
-
-<span class="sd">    import cv2</span>
-<span class="sd">    from video_utils.VideoCard import VideoCard</span>
-
-<span class="sd">    with VideoCard() as vc:</span>
-<span class="sd">        while True:</span>
-<span class="sd">            f = vc.most_recent_frame()</span>
-<span class="sd">            cv2.imshow(&quot;Preview&quot;, f)</span>
-
-<span class="sd">            keypress = cv2.waitKey(1)</span>
-<span class="sd">            if keypress &amp; 0xFF == ord(&#39;q&#39;):</span>
-<span class="sd">                break</span>
-<span class="sd">            time.sleep(1)</span>
+<span class="sd">    &lt;h3 class=&quot;cls_header&quot;&gt;VideoCard&lt;/h3&gt;</span>
+<span class="sd">    &lt;div class=&quot;highlight cls_author&quot;&gt;</span>
+<span class="sd">        &lt;pre&gt;</span>
+<span class="sd">        Author: Jeffery Alkire</span>
+<span class="sd">        Date:   October 2023&lt;/pre&gt;</span>
+<span class="sd">    &lt;/div&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
@@ -70,24 +57,31 @@
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="n">VideoReadSpecs</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;VideoReadSpecs&quot;</span><span class="p">,</span> <span class="s2">&quot;device height width&quot;</span><span class="p">)</span>
-<span class="n">def_read_specs</span> <span class="o">=</span> <span class="n">VideoReadSpecs</span><span class="p">(</span><span class="s2">&quot;/dev/video0&quot;</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="mi">1280</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**Named tuple** used to pass the necessary information about the</span>
+<span class="sd">video device to the :py:class:`VideoCard&lt;pyvr.VideoCard.VideoCard&gt;`</span>
+<span class="sd">object so that it can properly retreive the video data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
+<span class="c1"># default device specifications in case none are supplied.</span>
+<span class="n">def_read_specs</span> <span class="o">=</span> <span class="n">VideoReadSpecs</span><span class="p">(</span><span class="s2">&quot;/dev/video0&quot;</span><span class="p">,</span> <span class="mi">720</span><span class="p">,</span> <span class="mi">1280</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VideoCard">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoCard.VideoCard">[docs]</a>
 <span class="k">class</span> <span class="nc">VideoCard</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to interact with a web-camera or other recording device.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A VideoCard object will start a thread that will monitor the video stream</span>
+<span class="sd">    of a linux video device. It is designed to work with a with clause.</span>
 
+<span class="sd">    .. SEEALSO:: Code snippet from :py:func:`record(...)&lt;pyvr.record&gt;`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="VideoCard.__init__">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.VideoCard.VideoCard.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">VideoReadSpecs</span> <span class="o">=</span> <span class="n">def_read_specs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;VideoCard object constructor.</span>
-
-<span class="sd">        Params:</span>
-<span class="sd">            specs (VideoReadSpecs): device and screen size of the video capture device.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: VideoCard object constructor.</span>
+<span class="sd">        :param specs: device and screen size of the video capture device.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up Video Card object&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">:</span> <span class="n">VideoReadSpecs</span> <span class="o">=</span> <span class="n">specs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vid_source</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoCapture</span><span class="p">(</span><span class="n">specs</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
@@ -95,18 +89,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">grab_vid_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">latest_frame</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - device = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="o">.</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - size   = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - size   = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="VideoCard.start_viewing">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoCard.VideoCard.start_viewing">[docs]</a>
     <span class="k">def</span> <span class="nf">start_viewing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start monitoring this device and storing the video images locally.  This will</span>
-<span class="sd">        start a thread devoted to the process and then return.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Start monitoring this device and storing the video images locally.  This will</span>
+<span class="sd">                start a thread devoted to the process and then return.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting video capture.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewing</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vid_source</span><span class="o">.</span><span class="n">isOpened</span><span class="p">():</span>
@@ -123,11 +115,9 @@
 <div class="viewcode-block" id="VideoCard.frame_loader">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoCard.VideoCard.frame_loader">[docs]</a>
     <span class="k">def</span> <span class="nf">frame_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Code executed by the video-capture-thread. Constantly examine the video from the</span>
-<span class="sd">        card and store it locally.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Code executed by the video-capture-thread. Constantly examine the video from the</span>
+<span class="sd">                card and store it locally.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;video-capture-thread has started.&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewing</span><span class="p">:</span>
@@ -139,11 +129,10 @@
 <div class="viewcode-block" id="VideoCard.most_recent_frame">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoCard.VideoCard.most_recent_frame">[docs]</a>
     <span class="k">def</span> <span class="nf">most_recent_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the most recently captured frame from the video capture device.  Used to</span>
-<span class="sd">        view or record the contents of the video stream.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bytes: binary image as captured by the video capture device.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Get the most recently captured frame from the video capture device.  Used to</span>
+<span class="sd">                view or record the contents of the video stream.</span>
+<span class="sd">        :return: binary image as captured by the video capture device.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">latest_frame</span></div>
 
@@ -151,10 +140,9 @@
 <div class="viewcode-block" id="VideoCard.stop_viewing">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoCard.VideoCard.stop_viewing">[docs]</a>
     <span class="k">def</span> <span class="nf">stop_viewing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Complete the monitoring of video capture device.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Complete the monitoring of video capture device and terminate the</span>
+<span class="sd">                corresponding thread..</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Ending video capture.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewing</span><span class="p">:</span>

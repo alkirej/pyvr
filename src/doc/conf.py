@@ -31,14 +31,20 @@ author = 'Jeffery Alkire'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
+    'sphinx.ext.autosectionlabel',
     'sphinx.ext.todo',
+    'sphinx.ext.viewcode',
+    "sphinx_autodoc_typehints",
 ]
+autodoc_default_flags = {
+    "show-inheritance": False
+}
 autodoc_default_options = {
         "members": True,
-        "show-inheritance": True
         }
-autodoc_typehints = "description"
+# autodoc_typehints = "description"
+
+autosectionlabel_prefix_document = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

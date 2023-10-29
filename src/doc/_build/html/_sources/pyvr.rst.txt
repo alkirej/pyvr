@@ -1,41 +1,30 @@
 ================================
 Python Video Recorder (pyvr) 
 ================================
-
+---------------
 Functions
 ---------------
 
 .. automodule:: pyvr
-   :member-order: bysource
-   :members:
+    :member-order: bysource
+    :members:
 
-AudioInput
-----------------------
-
+----------
+Classes
+----------
 .. automodule:: pyvr.AudioInput
-   :members:
-   :undoc-members:
-   :exclude-members: lookup_device
-
-AudioRecorder 
--------------------------
+    :members:
+    :special-members: __init__
+    :exclude-members: lookup_device
 
 .. automodule:: pyvr.AudioRecorder
-   :members:
-   :undoc-members:
-
-VideoCard
----------------------
+    :members:
+    :special-members: __init__
 
 .. automodule:: pyvr.VideoCard
-   :members:
-   :undoc-members:
-
-VideoRecorder
--------------------------
+    :members:
+    :special-members: __init__
 
 .. automodule:: pyvr.VideoRecorder
-   :members:
-   :undoc-members:
-
-
+    :members:
+    :special-members: __init__

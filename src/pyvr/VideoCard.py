@@ -1,25 +1,12 @@
 """
-A VideoCard object will start a thread that will monitor the video stream
-of a linux video device. It is designed to work with a with clause as shown
-below.
+.. RAW:: html
 
-Example Code:
-=============
-
-.. code-block:: python
-
-    import cv2
-    from video_utils.VideoCard import VideoCard
-
-    with VideoCard() as vc:
-        while True:
-            f = vc.most_recent_frame()
-            cv2.imshow("Preview", f)
-
-            keypress = cv2.waitKey(1)
-            if keypress & 0xFF == ord('q'):
-                break
-            time.sleep(1)
+    <h3 class="cls_header">VideoCard</h3>
+    <div class="highlight cls_author">
+        <pre>
+        Author: Jeffery Alkire
+        Date:   October 2023</pre>
+    </div>
 """
 from collections import namedtuple
 from typing import Self
@@ -30,22 +17,27 @@ import threading as thr
 import time
 
 VideoReadSpecs = namedtuple("VideoReadSpecs", "device height width")
+"""
+**Named tuple** used to pass the necessary information about the
+video device to the :py:class:`VideoCard<pyvr.VideoCard.VideoCard>`
+object so that it can properly retreive the video data.
+"""
+
+# default device specifications in case none are supplied.
 def_read_specs = VideoReadSpecs("/dev/video0", 720, 1280)
 
-
 class VideoCard:
-    """Class to interact with a web-camera or other recording device."""
+    """
+    A VideoCard object will start a thread that will monitor the video stream
+    of a linux video device. It is designed to work with a with clause.
 
+    .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
+    """
     def __init__(self, specs: VideoReadSpecs = def_read_specs) -> None:
-        """VideoCard object constructor.
-
-        Params:
-            specs (VideoReadSpecs): device and screen size of the video capture device.
-
-        Returns:
-            None
         """
-
+        :about: VideoCard object constructor.
+        :param specs: device and screen size of the video capture device.
+        """
         log.info("Setting up Video Card object")
         self.specs: VideoReadSpecs = specs
         self.vid_source: cv2.VideoCapture = cv2.VideoCapture(specs.device)
@@ -56,13 +48,10 @@ class VideoCard:
         log.debug(f"    - size   = {self.specs.width} x {self.specs.height}")
 
     def start_viewing(self) -> None:
-        """Start monitoring this device and storing the video images locally.  This will
-        start a thread devoted to the process and then return.
-
-        Returns:
-            None
         """
-
+        :about: Start monitoring this device and storing the video images locally.  This will
+                start a thread devoted to the process and then return.
+        """
         log.info("Starting video capture.")
         if not self.viewing:
             if self.vid_source.isOpened():
@@ -76,11 +65,9 @@ class VideoCard:
                 raise exc
 
     def frame_loader(self) -> None:
-        """Code executed by the video-capture-thread. Constantly examine the video from the
-        card and store it locally.
-
-        Returns:
-            None
+        """
+        :about: Code executed by the video-capture-thread. Constantly examine the video from the
+                card and store it locally.
         """
         log.info("video-capture-thread has started.")
         while self.viewing:
@@ -89,19 +76,17 @@ class VideoCard:
                 self.latest_frame = frame
 
     def most_recent_frame(self) -> bytes:
-        """Get the most recently captured frame from the video capture device.  Used to
-        view or record the contents of the video stream.
-
-        Returns:
-            bytes: binary image as captured by the video capture device.
+        """
+        :about: Get the most recently captured frame from the video capture device.  Used to
+                view or record the contents of the video stream.
+        :return: binary image as captured by the video capture device.
         """
         return self.latest_frame
 
     def stop_viewing(self) -> None:
-        """Complete the monitoring of video capture device.
-
-        Returns:
-            None
+        """
+        :about: Complete the monitoring of video capture device and terminate the
+                corresponding thread..
         """
         log.info("Ending video capture.")
         if self.viewing:

@@ -1,4 +1,4 @@
-#!/home/jeff/git/v4l2-recorder/bin/python
+#!/home/jeff/git/v4l2-recorder/bin/python3.11
 
 # Copyright: This module has been placed in the public domain.
 

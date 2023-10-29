@@ -1,11 +1,14 @@
-div.document {
+div.document, div.footer, div.related {
     background-color: #110540;
 }
-div.code-block-caption {
-    background-color: #310976;
-}
-div.highlight pre {
+
+div.highlight pre, dl.field-list dt {
     background-color: #d1c9ff;
+}
+
+div.cls_author {
+    font-size: 125%;
+    color: #110540;
 }
 
 div.body h1 {
@@ -15,11 +18,19 @@ div.body h1 {
     font-size: 22;
 }
 
-div.body h2 {
-    background-color: #0c3e53;
+div.body h2, div.code-block-caption {
+    background-color: #110540;
     color: white;
     font-weight: bold;
     font-size: 18;
+}
+
+div.body h3 {
+    padding-left: 50px;
+    background-color: #310976;
+    color: white;
+    font-weight: bold;
+    font-size: 120%;
 }
 
 .field-odd p {
@@ -53,9 +64,7 @@ div.sphinxsidebar a {
 div.sphinxsidebar {
     font-size: 120%;
 }
-
 code {
-    margin-bottom: -5px;
     font-size: 1.05em;
 }
 
@@ -63,15 +72,14 @@ div.sphinxsidebar #searchbox input[type="text"] {
     width: 50%;
 }
 
-div.related {
-    background-color: #110540;
-}
 
-div.sphinxsidebar ul ul {
+div.sphinxsidebar ul ul li:last-child {
+    margin-bottom: 15px;
+}
+div.sphinxsidebar div.sphinxsidebarwrapper div ul ul {
     margin-top: 5px;
-    margin-bottom: 5px;
+}
+div.sphinxsidebar div.sphinxsidebarwrapper div ul ul ul {
+    margin-top: 0px;
 }
 
-dl.field-list dt {
-    background-color: #d1c9ff;
-}

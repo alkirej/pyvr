@@ -7,7 +7,7 @@
     <title>pyvr.VideoRecorder &#8212; Python Video Recorder  documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=aa81f33d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=b4431309" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pyvr.css?v=8815e9bf" />
     
     <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
@@ -38,7 +38,17 @@
           <div class="body" role="main">
             
   <h1>Source code for pyvr.VideoRecorder</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. RAW:: html</span>
+
+<span class="sd">    &lt;h3 class=&quot;cls_header&quot;&gt;VideoRecorder&lt;/h3&gt;</span>
+<span class="sd">    &lt;div class=&quot;highlight cls_author&quot;&gt;</span>
+<span class="sd">        &lt;pre&gt;</span>
+<span class="sd">        Author: Jeffery Alkire</span>
+<span class="sd">        Date:   October 2023&lt;/pre&gt;</span>
+<span class="sd">    &lt;/div&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
 <span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">threading</span>
@@ -49,20 +59,50 @@
 <div class="viewcode-block" id="VideoRecorderSpecs">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorderSpecs">[docs]</a>
 <span class="k">class</span> <span class="nc">VideoRecorderSpecs</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class used to pass relevant settings to the</span>
+<span class="sd">    :py:class:`VideoRecorder&lt;pyvr.VideoRecorder.VideoRecorder&gt;`</span>
+<span class="sd">    object so that it can properly record the video to disk.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="VideoRecorderSpecs.__init__">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorderSpecs.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
                  <span class="n">codec</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mp4v&quot;</span>
                  <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: VideoRecorderSpecs constructor</span>
+<span class="sd">        :param fps:   frames to record during each second.</span>
+<span class="sd">        :param codec: Codec to use while recording.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">codec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">fps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">codec</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="o">.</span><span class="n">fourcc</span><span class="p">(</span><span class="o">*</span><span class="n">codec</span><span class="p">)</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="VideoRecorder">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder">[docs]</a>
 <span class="k">class</span> <span class="nc">VideoRecorder</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">card</span><span class="p">:</span> <span class="n">VideoCard</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">VideoRecorderSpecs</span> <span class="o">=</span> <span class="n">VideoRecorderSpecs</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A VideoRecorder object will start a thread that will monitor and record</span>
+<span class="sd">    video frames supplied by</span>
+<span class="sd">    :py:class:`VideoCard&lt;pyvr.VideoCard.VideoCard&gt;`</span>
+
+<span class="sd">    .. SEEALSO:: Code snippet from :py:func:`record(...)&lt;pyvr.record&gt;`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="VideoRecorder.__init__">
+<a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">card</span><span class="p">:</span> <span class="n">VideoCard</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">VideoRecorderSpecs</span> <span class="o">=</span> <span class="n">VideoRecorderSpecs</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: VideoRecorder constructor</span>
+<span class="sd">        :param filename: filename (currently must end with .mp4) to record video to.</span>
+<span class="sd">        :param card:  object used to retrieve the video frames from the hardware.</span>
+<span class="sd">        :param specs: setup parameters for this recorder object.  Things like the codec to</span>
+<span class="sd">                      use to record (only &quot;mp4v&quot; currently supported) the video and the</span>
+<span class="sd">                      speed (fps) to record at.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.mp4&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setup video recorder.&quot;</span><span class="p">)</span>
@@ -87,11 +127,16 @@
                                       <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">codec</span><span class="p">,</span>
                                       <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">fps</span><span class="p">,</span>
                                       <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
-                                      <span class="p">)</span>
+                                      <span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="VideoRecorder.start_recording">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.start_recording">[docs]</a>
     <span class="k">def</span> <span class="nf">start_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Start a new thread and use it to record (write to disk) the video</span>
+<span class="sd">                frames retreived from the VideoCard</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting video recording.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">True</span>
@@ -102,6 +147,9 @@
 <div class="viewcode-block" id="VideoRecorder.stop_recording">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.stop_recording">[docs]</a>
     <span class="k">def</span> <span class="nf">stop_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Complete recording and stop the thread doing it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Stopping video recording.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
@@ -111,12 +159,23 @@
 <div class="viewcode-block" id="VideoRecorder.ready_for_new_frame">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.ready_for_new_frame">[docs]</a>
     <span class="k">def</span> <span class="nf">ready_for_new_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: determine if the recorder is able to store the next video frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_frame_avail</span></div>
 
 
 <div class="viewcode-block" id="VideoRecorder.next_frame">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.next_frame">[docs]</a>
-    <span class="k">def</span> <span class="nf">next_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">next_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: get a copy of the next frame to be saved to disk.</span>
+<span class="sd">        :note:  The frame is only cached at this point.  It will be saved to disk only</span>
+<span class="sd">                when it is time (based on the fps).  This insures the recording is taken</span>
+<span class="sd">                at the correct speed.</span>
+<span class="sd">        :returns: Return TRUE if the next frame was accepted and FALSE if it is too</span>
+<span class="sd">                  soon.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ready_for_new_frame</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">new_frame_avail</span> <span class="o">=</span> <span class="kc">True</span>
@@ -127,7 +186,14 @@
 
 <div class="viewcode-block" id="VideoRecorder.record">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.record">[docs]</a>
-    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Routine run from the VideoRecorder&#39;s thread. This thread monitors</span>
+<span class="sd">                the passage of time recording the proper number of frames each</span>
+<span class="sd">                second.</span>
+<span class="sd">        :note:  A log entry is written at the conclusion of recording indicating</span>
+<span class="sd">                the speed of the recording.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;video-write-thread has started.&quot;</span><span class="p">)</span>
         <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
@@ -156,15 +222,23 @@
 
 <div class="viewcode-block" id="VideoRecorder.record_next_frame_at">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.record_next_frame_at">[docs]</a>
-    <span class="k">def</span> <span class="nf">record_next_frame_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">record_next_frame_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :about: Determine the time the next frame should be recorded.</span>
+<span class="sd">        :param start: the time the video recording began (in seconds)</span>
+<span class="sd">        :returns: the results of a simple calculation of the time the</span>
+<span class="sd">                  next frame should be saved. (in seconds)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">fps</span></div>
 
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; __enter__ and __exit__ allow objects of this class to use the with notation.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; __enter__ and __exit__ allow objects of this class to use the with notation.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="kc">None</span></div>
 
