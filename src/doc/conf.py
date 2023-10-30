@@ -15,7 +15,16 @@ import sys
 # del sys.path[:]
 sys.path.insert(0, '/home/jeff/git/v4l2-recorder/src')
 sys.path.insert(0, '/home/jeff/git/v4l2-recorder/lib/python3.11/site-packages')
+import pyvr.configuration as vrcfg
 
+vrcfg._AUDIO_CFG = {
+            "DeviceName": "test",
+            "SampleRate": "48000"
+            }
+vrcfg._VIDEO_CFG = {
+            "DeviceName": "test",
+            "SampleRate": "48000"
+            }
 
 # -- Project information -----------------------------------------------------
 

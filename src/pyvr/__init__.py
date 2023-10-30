@@ -9,20 +9,13 @@ import time
 from ffmpeg import FFmpeg
 
 from .AudioRecorder import AudioInput, AudioRecorder
+from .configuration import load_config, PreviewCfg
 from .VideoRecorder import VideoCard, VideoRecorder
 
 # GLOBAL VARIABLES FOR FILE EXTENSION TYPES
 VIDEO_EXT = "mp4"
 AUDIO_EXT = "wav"
 RESULT_EXT = "mkv"
-
-# SETUP LOGGER
-log.basicConfig(filename="pvr.log",
-                filemode="w",
-                format="%(asctime)s %(filename)15.15s %(funcName)15.15s %(levelname)5.5s %(lineno)4.4s %(message)s",
-                datefmt="%Y%m%d %H%M%S"
-                )
-log.getLogger().setLevel(log.DEBUG)
 
 
 def record(filename_no_ext: str) -> None:
@@ -55,27 +48,34 @@ def record(filename_no_ext: str) -> None:
     """
     log.debug("*** *** *** Begin recording *** *** ***")
 
+    # LOAD PREVIEW CONFIG ATTRIBUTES FROM pyvr.ini
+    _, _, preview_config = load_config()
+    width: int = int(preview_config[PreviewCfg.WIDTH])
+    height: int = int(preview_config[PreviewCfg.HEIGHT])
+    interval: int = int(preview_config[PreviewCfg.INTERVAL])
+
     # Each with line creates its own thread.
     with VideoCard() as vc:
         with VideoRecorder(f"{filename_no_ext}.{VIDEO_EXT}", vc):
-            with AudioInput(input_name="Pyle") as ai:
+            with AudioInput() as ai:
                 with AudioRecorder(ai, filename=f"{filename_no_ext}.{AUDIO_EXT}"):
                     while True:
                         # Preview the video being recorded.
                         f = vc.most_recent_frame()
-                        resized = cv2.resize(f, (300, 200))
+                        resized = cv2.resize(f, (width, height))
                         cv2.imshow("Preview", resized)
 
                         # Stop/end recording when escape key is pressed.
                         keypress = cv2.waitKey(1)
-                        if keypress & 0xFF == 27: # ord('q'):
+                        if keypress & 0xFF == 27:
                             break
 
                         # Save some cpu for other people. Sleep and only show an occasional update.
-                        time.sleep(1)
+                        time.sleep(interval)
 
     cv2.destroyWindow("Preview")
     log.info("Combine and compress recording information.")
+    print("Processing final results.  Please be patient ...")
     combine_video_and_audio(f"{filename_no_ext}.{VIDEO_EXT}",
                             f"{filename_no_ext}.{AUDIO_EXT}",
                             f"{filename_no_ext}.{RESULT_EXT}"

@@ -16,15 +16,18 @@ import logging as log
 import threading as thr
 import time
 
+from .configuration import load_config, VideoCfg
+
 VideoReadSpecs = namedtuple("VideoReadSpecs", "device height width")
 """
 **Named tuple** used to pass the necessary information about the
 video device to the :py:class:`VideoCard<pyvr.VideoCard.VideoCard>`
-object so that it can properly retreive the video data.
+object so that it can properly retrieve the video data.
 """
 
 # default device specifications in case none are supplied.
 def_read_specs = VideoReadSpecs("/dev/video0", 720, 1280)
+
 
 class VideoCard:
     """
@@ -33,19 +36,28 @@ class VideoCard:
 
     .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
     """
-    def __init__(self, specs: VideoReadSpecs = def_read_specs) -> None:
+    def __init__(self) -> None:
         """
         :about: VideoCard object constructor.
-        :param specs: device and screen size of the video capture device.
         """
+        _, video_config, _ = load_config()
+
         log.info("Setting up Video Card object")
-        self.specs: VideoReadSpecs = specs
-        self.vid_source: cv2.VideoCapture = cv2.VideoCapture(specs.device)
+
+        # MEMBERS DESCRIBING THE VIDEO INPUT DEVICE'S SETUP
+        self.width: int = int(video_config[VideoCfg.WIDTH])
+        self.height: int = int(video_config[VideoCfg.HEIGHT])
+        self.device: str = video_config[VideoCfg.DEVICE]
+
+        self.vid_source: cv2.VideoCapture = cv2.VideoCapture(self.device)
+
+        # MEMBERS FOR INTER-THREAD COMMUNICATION
         self.viewing: bool = False
         self.grab_vid_thread = None
         self.latest_frame = None
-        log.debug(f"    - device = {self.specs.device}")
-        log.debug(f"    - size   = {self.specs.width} x {self.specs.height}")
+
+        log.debug(f"    - device = {self.device}")
+        log.debug(f"    - size   = {self.width} x {self.height}")
 
     def start_viewing(self) -> None:
         """

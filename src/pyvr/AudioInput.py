@@ -8,6 +8,7 @@
         Date:   October 2023</pre>
     </div>
 """
+import enum
 import logging as log
 import pyaudio as pa
 import sounddevice as sd
@@ -15,6 +16,16 @@ import threading as thr
 import time
 
 from typing import Self
+
+from .configuration import load_config, AudioCfg
+
+
+class SdAttr(str, enum.Enum):
+    """Sound device Attribute constants"""
+    INDEX = "index"
+    NAME = "name"
+    INPUT_CHANNELS = "max_input_channels"
+    SAMPLE_RATE = "default_samplerate"
 
 
 def lookup_device(name: str) -> dict | None:
@@ -43,47 +54,47 @@ class AudioInput:
 
     .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
     """
-    def __init__(self, input_name: str = "Pyle", split_dur: int = 1, sample_size: int = pa.paInt16) -> None:
+    def __init__(self) -> None:
         """
         :about: AudioInput constructor
-        :param input_name:  name of the microphone or other audio input device. It is
-                            a string that should match the name linux refers to the
-                            device as.
-        :param split_dur:   how many seconds of sound to record between disk writes.
-        :param sample_size: how many bits to use for each sample.  This value should be
-                            a pulse audio constant (paInt8, paInt16, paInt24, paInt32).
-                            Passing 16 will probably not get you a 16-bit sample size.
         """
         log.info("Setting up audio input device configuration parameters.")
-        self.listening: bool = False
-        self.listen_thread = None
-        self.latest_audio: bytes | None = None
-        self.audio_devices = sd.default.device
-        self.new_audio_sample = False
-        self.latest_sample = None
-        self.sample_size = sample_size
 
-        audio_input_device = lookup_device(input_name)
-        log.debug(f'Using audio device: {audio_input_device["name"]}')
-        if audio_input_device is not None:
-            self.audio_devices[0] = audio_input_device["index"]
-            self.channels = audio_input_device["max_input_channels"]
-            self.sample_rate = int(audio_input_device["default_samplerate"])
-        else:
-            self.channels = 2
-            self.sample_rate = 48000
+        # CONFIGURE/SETUP FOR THE AUDIO INPUT DEVICE (AKA: MICROPHONE)
+        audio_config, _, _ = load_config()
 
-        self.buffer_size = int(split_dur * self.sample_rate)
+        audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
+        if audio_input_device is None:
+            log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')
+            raise OSError(f'Audio input device {audio_config[AudioCfg.DEVICE_NAME]} not found.')
 
-        log.debug(f"    - audio device index = {self.audio_devices[0]}")
+        log.debug(f'Using audio device: {audio_input_device[SdAttr.NAME]}')
+
+        # LINUX'S INDEX TO THE MIC WE WILL USE
+        self.audio_device_idx: int = audio_input_device[SdAttr.INDEX]
+
+        # SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.
+        self.sample_rate: int = int(audio_input_device[SdAttr.SAMPLE_RATE])
+        self.buffer_size: int = int(self.sample_rate)
+
+        # NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)
+        self.channels: int = audio_input_device[SdAttr.INPUT_CHANNELS]
+
+        # Log device info if we are debugging.
+        log.debug(f"    - audio device index = {self.audio_device_idx}")
         log.debug(f"    - channels    = {self.channels}")
         log.debug(f"    - sample rate = {self.sample_rate}")
-        log.debug(f"    - sample_size = {self.sample_size}")
         log.debug(f"    - buffer_size = {self.buffer_size}")
+
+        # VARIABLES TO ALLOW THREAD INTERACTIONS
+        self.listening: bool = False
+        self.listen_thread: thr.Thread | None = None
+        self.latest_audio: bytes | None = None
+        self.new_audio_sample: bool = False
 
     def start_listening(self) -> None:
         """
-        :about: Start monitoring this device and storing the andio data locally.  This will
+        :about: Start monitoring this device and storing the audio data locally.  This will
                 start a thread devoted to the process and then return.
         """
         log.info("Starting audio capture.")
@@ -100,11 +111,11 @@ class AudioInput:
         """
         log.info("audio-capture-thread has started.")
         audio_interface = pa.PyAudio()  # Create an interface to PortAudio
-        audio_stream = audio_interface.open(format=self.sample_size,
+        audio_stream = audio_interface.open(format=pa.paInt16,
                                             channels=self.channels,
                                             rate=self.sample_rate,
                                             frames_per_buffer=self.buffer_size,
-                                            input_device_index=self.audio_devices[0],
+                                            input_device_index=self.audio_device_idx,
                                             input=True
                                             )
 

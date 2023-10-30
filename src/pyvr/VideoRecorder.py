@@ -13,6 +13,7 @@ import logging as log
 import time
 import threading
 
+from .configuration import load_config, VideoCfg
 from .VideoCard import VideoCard
 
 
@@ -56,27 +57,35 @@ class VideoRecorder:
         assert filename.endswith(".mp4")
 
         log.info("Setup video recorder.")
-        self.write_specs = specs
-        self.read_specs = card.specs
+
+        # MEMBERS TO ENSURE VIDEO IS RECORDED AT THE PROPER PACE
         self.start = time.time
-        self.written_frames = 0
+        self.frame_count = 0
+        self.time_per_frame = 1 / specs.fps
+        self.time_to_sleep = self.time_per_frame / 5
+
+        # MEMBERS RELATED TO INTER-THREAD COMMUNICATION
         self.recording = False
         self.record_thread = None
         self.new_frame_avail = False
         self.frame = None
-        self.frame_count = 0
-        self.time_per_frame = 1 / specs.fps
-        self.time_to_sleep = self.time_per_frame / 5
         self.card = card
         self.filename = filename
 
-        log.debug(f"    - codec = {self.write_specs.codec}")
-        log.debug(f"    - fps   = {self.write_specs.fps}")
-        log.debug(f"    - size  = {self.read_specs.width} x {self.read_specs.height}")
+        # LOAD CONFIG RELATED TO VIDEO OUTPUT FILE
+        _, video_config, _ = load_config()
+        self.fps = int(video_config[VideoCfg.FPS])
+        self.codec = cv2.VideoWriter.fourcc(*video_config[VideoCfg.CODEC])
+        self.width = int(video_config[VideoCfg.WIDTH])
+        self.height = int(video_config[VideoCfg.HEIGHT])
+
+        log.debug(f"    - codec = {self.codec}")
+        log.debug(f"    - fps   = {self.fps}")
+        log.debug(f"    - size  = {self.width} x {self.height}")
         self.writer = cv2.VideoWriter(self.filename,
-                                      self.write_specs.codec,
-                                      self.write_specs.fps,
-                                      (self.read_specs.width, self.read_specs.height)
+                                      self.codec,
+                                      self.fps,
+                                      (self.width, self.height)
                                       )
 
     def start_recording(self) -> None:
@@ -144,7 +153,7 @@ class VideoRecorder:
                 self.new_frame_avail = False
                 self.frame_count += 1
             else:
-                exc = IOError(f"Unable to record at {self.write_specs.fps} frames/second.")
+                exc = IOError(f"Unable to record at {self.fps} frames/second.")
                 log.exception(exc)
                 raise exc
 
@@ -161,7 +170,7 @@ class VideoRecorder:
         :returns: the results of a simple calculation of the time the
                   next frame should be saved. (in seconds)
         """
-        return start + self.frame_count / self.write_specs.fps
+        return start + self.frame_count / self.fps
 
     def __enter__(self):
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""

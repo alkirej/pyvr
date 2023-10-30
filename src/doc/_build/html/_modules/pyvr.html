@@ -47,6 +47,7 @@
 
 <span class="kn">from</span> <span class="nn">ffmpeg</span> <span class="kn">import</span> <span class="n">FFmpeg</span>
 
+<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">_AUDIO_CFG</span><span class="p">,</span> <span class="n">_VIDEO_CFG</span>
 <span class="kn">from</span> <span class="nn">.AudioRecorder</span> <span class="kn">import</span> <span class="n">AudioInput</span><span class="p">,</span> <span class="n">AudioRecorder</span>
 <span class="kn">from</span> <span class="nn">.VideoRecorder</span> <span class="kn">import</span> <span class="n">VideoCard</span><span class="p">,</span> <span class="n">VideoRecorder</span>
 
@@ -54,14 +55,6 @@
 <span class="n">VIDEO_EXT</span> <span class="o">=</span> <span class="s2">&quot;mp4&quot;</span>
 <span class="n">AUDIO_EXT</span> <span class="o">=</span> <span class="s2">&quot;wav&quot;</span>
 <span class="n">RESULT_EXT</span> <span class="o">=</span> <span class="s2">&quot;mkv&quot;</span>
-
-<span class="c1"># SETUP LOGGER</span>
-<span class="n">log</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;pvr.log&quot;</span><span class="p">,</span>
-                <span class="n">filemode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span>
-                <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="si">%(filename)15.15s</span><span class="s2"> </span><span class="si">%(funcName)15.15s</span><span class="s2"> </span><span class="si">%(levelname)5.5s</span><span class="s2"> </span><span class="si">%(lineno)4.4s</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">datefmt</span><span class="o">=</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2"> %H%M%S&quot;</span>
-                <span class="p">)</span>
-<span class="n">log</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">log</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="record">
@@ -99,7 +92,7 @@
     <span class="c1"># Each with line creates its own thread.</span>
     <span class="k">with</span> <span class="n">VideoCard</span><span class="p">()</span> <span class="k">as</span> <span class="n">vc</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">VideoRecorder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename_no_ext</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">VIDEO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vc</span><span class="p">):</span>
-            <span class="k">with</span> <span class="n">AudioInput</span><span class="p">(</span><span class="n">input_name</span><span class="o">=</span><span class="s2">&quot;Pyle&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ai</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">AudioInput</span><span class="p">()</span> <span class="k">as</span> <span class="n">ai</span><span class="p">:</span>
                 <span class="k">with</span> <span class="n">AudioRecorder</span><span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename_no_ext</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">AUDIO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="c1"># Preview the video being recorded.</span>
@@ -109,7 +102,7 @@
 
                         <span class="c1"># Stop/end recording when escape key is pressed.</span>
                         <span class="n">keypress</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">keypress</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span> <span class="c1"># ord(&#39;q&#39;):</span>
+                        <span class="k">if</span> <span class="n">keypress</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span>
                             <span class="k">break</span>
 
                         <span class="c1"># Save some cpu for other people. Sleep and only show an occasional update.</span>

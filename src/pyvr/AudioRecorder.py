@@ -9,7 +9,6 @@
     </div>
 """
 import logging as log
-import pyaudio as pa
 import threading as thr
 import time
 import wave
@@ -36,10 +35,17 @@ class AudioRecorder:
         assert filename.endswith(".wav")
 
         log.info("Setup audio recorder.")
+        # MEMBERS USED TO INTERACT WITH THE DISK
         self.filename = filename
+
+        # MEMBERS USED TO INTERACT WITH THE AUDIO HARDWARE
         self.audio_input = audio_input
+
+        # MEMBERS USED TO COMMUNICATE TO THE RECORD THREAD
         self.recording = False
         self.record_thread = None
+
+        #  WAKE UP 5 TIMES BETWEEN EACH DISK WRITE
         self.time_to_sleep = (self.audio_input.buffer_size/self.audio_input.sample_rate) / 5
 
         log.debug(f"    - Audio output sent to {self.filename}")
@@ -71,11 +77,10 @@ class AudioRecorder:
                 it becomes available.
         """
         log.info("audio-write-thread has started.")
-        audio_interface = pa.PyAudio()  # Create an interface to PortAudio
 
         wav_file = wave.open(self.filename, 'wb')
         wav_file.setnchannels(self.audio_input.channels)
-        wav_file.setsampwidth(audio_interface.get_sample_size(self.audio_input.sample_size))
+        wav_file.setsampwidth(2)
         wav_file.setframerate(self.audio_input.sample_rate)
 
         while self.recording:

@@ -56,6 +56,8 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
 
+<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">_AUDIO_CFG</span><span class="p">,</span> <span class="n">_VIDEO_CFG</span>
+
 
 <span class="k">def</span> <span class="nf">lookup_device</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -87,13 +89,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="AudioInput.__init__">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Pyle&quot;</span><span class="p">,</span> <span class="n">split_dur</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">paInt16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">paInt16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :about: AudioInput constructor</span>
-<span class="sd">        :param input_name:  name of the microphone or other audio input device. It is</span>
-<span class="sd">                            a string that should match the name linux refers to the</span>
-<span class="sd">                            device as.</span>
-<span class="sd">        :param split_dur:   how many seconds of sound to record between disk writes.</span>
 <span class="sd">        :param sample_size: how many bits to use for each sample.  This value should be</span>
 <span class="sd">                            a pulse audio constant (paInt8, paInt16, paInt24, paInt32).</span>
 <span class="sd">                            Passing 16 will probably not get you a 16-bit sample size.</span>
@@ -107,17 +105,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">latest_sample</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
 
-        <span class="n">audio_input_device</span> <span class="o">=</span> <span class="n">lookup_device</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using audio device: </span><span class="si">{</span><span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">audio_input_device</span> <span class="o">=</span> <span class="n">lookup_device</span><span class="p">(</span><span class="n">_AUDIO_CFG</span><span class="p">[</span><span class="s2">&quot;DeviceName&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">audio_input_device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using audio device: </span><span class="si">{</span><span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">audio_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;max_input_channels&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;default_samplerate&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="mi">2</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">=</span> <span class="mi">48000</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unable to find device: </span><span class="si">{</span><span class="n">_AUDIO_CFG</span><span class="p">[</span><span class="s2">&quot;DeviceName&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Audio input device </span><span class="si">{</span><span class="n">_AUDIO_CFG</span><span class="p">[</span><span class="s2">&quot;DeviceName&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split_dur</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - audio device index = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - channels    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -130,7 +128,7 @@
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.start_listening">[docs]</a>
     <span class="k">def</span> <span class="nf">start_listening</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :about: Start monitoring this device and storing the andio data locally.  This will</span>
+<span class="sd">        :about: Start monitoring this device and storing the audio data locally.  This will</span>
 <span class="sd">                start a thread devoted to the process and then return.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting audio capture.&quot;</span><span class="p">)</span>
