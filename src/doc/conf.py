@@ -13,8 +13,8 @@ import os
 import sys
 
 # del sys.path[:]
-sys.path.insert(0, '/home/jeff/git/v4l2-recorder/src')
-sys.path.insert(0, '/home/jeff/git/v4l2-recorder/lib/python3.11/site-packages')
+sys.path.insert(0, '/home/jeff/git/pyvr/src')
+sys.path.insert(0, '/home/jeff/git/pyvr/lib/python3.11/site-packages')
 import pyvr.configuration as vrcfg
 
 vrcfg._AUDIO_CFG = {
