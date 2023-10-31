@@ -17,26 +17,6 @@ from .configuration import load_config, VideoCfg
 from .VideoCard import VideoCard
 
 
-class VideoRecorderSpecs:
-    """
-    Class used to pass relevant settings to the
-    :py:class:`VideoRecorder<pyvr.VideoRecorder.VideoRecorder>`
-    object so that it can properly record the video to disk.
-    """
-    def __init__(self,
-                 fps: int = 30,
-                 codec: str = "mp4v"
-                 ):
-        """
-        :about: VideoRecorderSpecs constructor
-        :param fps:   frames to record during each second.
-        :param codec: Codec to use while recording.
-        """
-        assert (len(codec) == 4)
-        self.fps = fps
-        self.codec = cv2.VideoWriter.fourcc(*codec)
-
-
 class VideoRecorder:
     """
     A VideoRecorder object will start a thread that will monitor and record
@@ -45,24 +25,15 @@ class VideoRecorder:
 
     .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
     """
-    def __init__(self, filename: str, card: VideoCard, specs: VideoRecorderSpecs = VideoRecorderSpecs()) -> None:
+    def __init__(self, filename: str, card: VideoCard) -> None:
         """
         :about: VideoRecorder constructor
         :param filename: filename (currently must end with .mp4) to record video to.
         :param card:  object used to retrieve the video frames from the hardware.
-        :param specs: setup parameters for this recorder object.  Things like the codec to
-                      use to record (only "mp4v" currently supported) the video and the
-                      speed (fps) to record at.
         """
         assert filename.endswith(".mp4")
 
         log.info("Setup video recorder.")
-
-        # MEMBERS TO ENSURE VIDEO IS RECORDED AT THE PROPER PACE
-        self.start = time.time
-        self.frame_count = 0
-        self.time_per_frame = 1 / specs.fps
-        self.time_to_sleep = self.time_per_frame / 5
 
         # MEMBERS RELATED TO INTER-THREAD COMMUNICATION
         self.recording = False
@@ -87,6 +58,12 @@ class VideoRecorder:
                                       self.fps,
                                       (self.width, self.height)
                                       )
+
+        # MEMBERS TO ENSURE VIDEO IS RECORDED AT THE PROPER PACE
+        self.start = time.time
+        self.frame_count = 0
+        self.time_per_frame = 1 / self.fps
+        self.time_to_sleep = self.time_per_frame / 5
 
     def start_recording(self) -> None:
         """

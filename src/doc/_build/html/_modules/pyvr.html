@@ -47,8 +47,8 @@
 
 <span class="kn">from</span> <span class="nn">ffmpeg</span> <span class="kn">import</span> <span class="n">FFmpeg</span>
 
-<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">_AUDIO_CFG</span><span class="p">,</span> <span class="n">_VIDEO_CFG</span>
 <span class="kn">from</span> <span class="nn">.AudioRecorder</span> <span class="kn">import</span> <span class="n">AudioInput</span><span class="p">,</span> <span class="n">AudioRecorder</span>
+<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">PreviewCfg</span>
 <span class="kn">from</span> <span class="nn">.VideoRecorder</span> <span class="kn">import</span> <span class="n">VideoCard</span><span class="p">,</span> <span class="n">VideoRecorder</span>
 
 <span class="c1"># GLOBAL VARIABLES FOR FILE EXTENSION TYPES</span>
@@ -89,6 +89,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;*** *** *** Begin recording *** *** ***&quot;</span><span class="p">)</span>
 
+    <span class="c1"># LOAD PREVIEW CONFIG ATTRIBUTES FROM pyvr.ini</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">preview_config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">preview_config</span><span class="p">[</span><span class="n">PreviewCfg</span><span class="o">.</span><span class="n">WIDTH</span><span class="p">])</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">preview_config</span><span class="p">[</span><span class="n">PreviewCfg</span><span class="o">.</span><span class="n">HEIGHT</span><span class="p">])</span>
+    <span class="n">interval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">preview_config</span><span class="p">[</span><span class="n">PreviewCfg</span><span class="o">.</span><span class="n">INTERVAL</span><span class="p">])</span>
+
     <span class="c1"># Each with line creates its own thread.</span>
     <span class="k">with</span> <span class="n">VideoCard</span><span class="p">()</span> <span class="k">as</span> <span class="n">vc</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">VideoRecorder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename_no_ext</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">VIDEO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vc</span><span class="p">):</span>
@@ -97,7 +103,7 @@
                     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                         <span class="c1"># Preview the video being recorded.</span>
                         <span class="n">f</span> <span class="o">=</span> <span class="n">vc</span><span class="o">.</span><span class="n">most_recent_frame</span><span class="p">()</span>
-                        <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+                        <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
                         <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s2">&quot;Preview&quot;</span><span class="p">,</span> <span class="n">resized</span><span class="p">)</span>
 
                         <span class="c1"># Stop/end recording when escape key is pressed.</span>
@@ -106,10 +112,11 @@
                             <span class="k">break</span>
 
                         <span class="c1"># Save some cpu for other people. Sleep and only show an occasional update.</span>
-                        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
 
     <span class="n">cv2</span><span class="o">.</span><span class="n">destroyWindow</span><span class="p">(</span><span class="s2">&quot;Preview&quot;</span><span class="p">)</span>
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Combine and compress recording information.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Processing final results.  Please be patient ...&quot;</span><span class="p">)</span>
     <span class="n">combine_video_and_audio</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename_no_ext</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">VIDEO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename_no_ext</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">AUDIO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename_no_ext</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">RESULT_EXT</span><span class="si">}</span><span class="s2">&quot;</span>

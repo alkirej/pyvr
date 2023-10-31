@@ -48,6 +48,7 @@
 <span class="sd">        Date:   October 2023&lt;/pre&gt;</span>
 <span class="sd">    &lt;/div&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">enum</span>
 <span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
 <span class="kn">import</span> <span class="nn">pyaudio</span> <span class="k">as</span> <span class="nn">pa</span>
 <span class="kn">import</span> <span class="nn">sounddevice</span> <span class="k">as</span> <span class="nn">sd</span>
@@ -56,7 +57,15 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Self</span>
 
-<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">_AUDIO_CFG</span><span class="p">,</span> <span class="n">_VIDEO_CFG</span>
+<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">AudioCfg</span>
+
+
+<span class="k">class</span> <span class="nc">SdAttr</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sound device Attribute constants&quot;&quot;&quot;</span>
+    <span class="n">INDEX</span> <span class="o">=</span> <span class="s2">&quot;index&quot;</span>
+    <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span>
+    <span class="n">INPUT_CHANNELS</span> <span class="o">=</span> <span class="s2">&quot;max_input_channels&quot;</span>
+    <span class="n">SAMPLE_RATE</span> <span class="o">=</span> <span class="s2">&quot;default_samplerate&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">lookup_device</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -89,39 +98,43 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="AudioInput.__init__">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.AudioInput.AudioInput.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">paInt16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :about: AudioInput constructor</span>
-<span class="sd">        :param sample_size: how many bits to use for each sample.  This value should be</span>
-<span class="sd">                            a pulse audio constant (paInt8, paInt16, paInt24, paInt32).</span>
-<span class="sd">                            Passing 16 will probably not get you a 16-bit sample size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up audio input device configuration parameters.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">listening</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">listen_thread</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">latest_audio</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">audio_devices</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="n">device</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">new_audio_sample</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">latest_sample</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span> <span class="o">=</span> <span class="n">sample_size</span>
 
-        <span class="n">audio_input_device</span> <span class="o">=</span> <span class="n">lookup_device</span><span class="p">(</span><span class="n">_AUDIO_CFG</span><span class="p">[</span><span class="s2">&quot;DeviceName&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">audio_input_device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using audio device: </span><span class="si">{</span><span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">audio_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;index&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;max_input_channels&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">audio_input_device</span><span class="p">[</span><span class="s2">&quot;default_samplerate&quot;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unable to find device: </span><span class="si">{</span><span class="n">_AUDIO_CFG</span><span class="p">[</span><span class="s2">&quot;DeviceName&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Audio input device </span><span class="si">{</span><span class="n">_AUDIO_CFG</span><span class="p">[</span><span class="s2">&quot;DeviceName&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">)</span>
+        <span class="c1"># CONFIGURE/SETUP FOR THE AUDIO INPUT DEVICE (AKA: MICROPHONE)</span>
+        <span class="n">audio_config</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+        <span class="n">audio_input_device</span> <span class="o">=</span> <span class="n">lookup_device</span><span class="p">(</span><span class="n">audio_config</span><span class="p">[</span><span class="n">AudioCfg</span><span class="o">.</span><span class="n">DEVICE_NAME</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">audio_input_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unable to find device: </span><span class="si">{</span><span class="n">audio_config</span><span class="p">[</span><span class="n">AudioCfg</span><span class="o">.</span><span class="n">DEVICE_NAME</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Audio input device </span><span class="si">{</span><span class="n">audio_config</span><span class="p">[</span><span class="n">AudioCfg</span><span class="o">.</span><span class="n">DEVICE_NAME</span><span class="p">]</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - audio device index = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Using audio device: </span><span class="si">{</span><span class="n">audio_input_device</span><span class="p">[</span><span class="n">SdAttr</span><span class="o">.</span><span class="n">NAME</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># LINUX&#39;S INDEX TO THE MIC WE WILL USE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">audio_device_idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">audio_input_device</span><span class="p">[</span><span class="n">SdAttr</span><span class="o">.</span><span class="n">INDEX</span><span class="p">]</span>
+
+        <span class="c1"># SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">audio_input_device</span><span class="p">[</span><span class="n">SdAttr</span><span class="o">.</span><span class="n">SAMPLE_RATE</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
+
+        <span class="c1"># NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">audio_input_device</span><span class="p">[</span><span class="n">SdAttr</span><span class="o">.</span><span class="n">INPUT_CHANNELS</span><span class="p">]</span>
+
+        <span class="c1"># Log device info if we are debugging.</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - audio device index = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_device_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - channels    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - sample rate = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - sample_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - buffer_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - buffer_size = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># VARIABLES TO ALLOW THREAD INTERACTIONS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listening</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listen_thread</span><span class="p">:</span> <span class="n">thr</span><span class="o">.</span><span class="n">Thread</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">latest_audio</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_audio_sample</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="AudioInput.start_listening">
@@ -148,11 +161,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;audio-capture-thread has started.&quot;</span><span class="p">)</span>
         <span class="n">audio_interface</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">PyAudio</span><span class="p">()</span>  <span class="c1"># Create an interface to PortAudio</span>
-        <span class="n">audio_stream</span> <span class="o">=</span> <span class="n">audio_interface</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_size</span><span class="p">,</span>
+        <span class="n">audio_stream</span> <span class="o">=</span> <span class="n">audio_interface</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">paInt16</span><span class="p">,</span>
                                             <span class="n">channels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span>
                                             <span class="n">rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">,</span>
                                             <span class="n">frames_per_buffer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="p">,</span>
-                                            <span class="n">input_device_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                            <span class="n">input_device_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_device_idx</span><span class="p">,</span>
                                             <span class="nb">input</span><span class="o">=</span><span class="kc">True</span>
                                             <span class="p">)</span>
 

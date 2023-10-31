@@ -53,33 +53,8 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 
+<span class="kn">from</span> <span class="nn">.configuration</span> <span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">VideoCfg</span>
 <span class="kn">from</span> <span class="nn">.VideoCard</span> <span class="kn">import</span> <span class="n">VideoCard</span>
-
-
-<div class="viewcode-block" id="VideoRecorderSpecs">
-<a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorderSpecs">[docs]</a>
-<span class="k">class</span> <span class="nc">VideoRecorderSpecs</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class used to pass relevant settings to the</span>
-<span class="sd">    :py:class:`VideoRecorder&lt;pyvr.VideoRecorder.VideoRecorder&gt;`</span>
-<span class="sd">    object so that it can properly record the video to disk.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="VideoRecorderSpecs.__init__">
-<a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorderSpecs.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
-                 <span class="n">codec</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mp4v&quot;</span>
-                 <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :about: VideoRecorderSpecs constructor</span>
-<span class="sd">        :param fps:   frames to record during each second.</span>
-<span class="sd">        :param codec: Codec to use while recording.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">codec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="n">fps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">codec</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="o">.</span><span class="n">fourcc</span><span class="p">(</span><span class="o">*</span><span class="n">codec</span><span class="p">)</span></div>
-</div>
-
 
 
 <div class="viewcode-block" id="VideoRecorder">
@@ -94,40 +69,45 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="VideoRecorder.__init__">
 <a class="viewcode-back" href="../../pyvr.html#pyvr.VideoRecorder.VideoRecorder.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">card</span><span class="p">:</span> <span class="n">VideoCard</span><span class="p">,</span> <span class="n">specs</span><span class="p">:</span> <span class="n">VideoRecorderSpecs</span> <span class="o">=</span> <span class="n">VideoRecorderSpecs</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">card</span><span class="p">:</span> <span class="n">VideoCard</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :about: VideoRecorder constructor</span>
 <span class="sd">        :param filename: filename (currently must end with .mp4) to record video to.</span>
 <span class="sd">        :param card:  object used to retrieve the video frames from the hardware.</span>
-<span class="sd">        :param specs: setup parameters for this recorder object.  Things like the codec to</span>
-<span class="sd">                      use to record (only &quot;mp4v&quot; currently supported) the video and the</span>
-<span class="sd">                      speed (fps) to record at.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.mp4&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setup video recorder.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span> <span class="o">=</span> <span class="n">specs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">specs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">written_frames</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># MEMBERS RELATED TO INTER-THREAD COMMUNICATION</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_frame_avail</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">frame_count</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">time_per_frame</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">specs</span><span class="o">.</span><span class="n">fps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">time_to_sleep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_per_frame</span> <span class="o">/</span> <span class="mi">5</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">card</span> <span class="o">=</span> <span class="n">card</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - codec = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">codec</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - fps   = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">fps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - size  = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># LOAD CONFIG RELATED TO VIDEO OUTPUT FILE</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">video_config</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_config</span><span class="p">[</span><span class="n">VideoCfg</span><span class="o">.</span><span class="n">FPS</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">codec</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="o">.</span><span class="n">fourcc</span><span class="p">(</span><span class="o">*</span><span class="n">video_config</span><span class="p">[</span><span class="n">VideoCfg</span><span class="o">.</span><span class="n">CODEC</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_config</span><span class="p">[</span><span class="n">VideoCfg</span><span class="o">.</span><span class="n">WIDTH</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">video_config</span><span class="p">[</span><span class="n">VideoCfg</span><span class="o">.</span><span class="n">HEIGHT</span><span class="p">])</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - codec = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">codec</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - fps   = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - size  = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2"> x </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">VideoWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">codec</span><span class="p">,</span>
-                                      <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">fps</span><span class="p">,</span>
-                                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_specs</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
-                                      <span class="p">)</span></div>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">codec</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="p">,</span>
+                                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+                                      <span class="p">)</span>
+
+        <span class="c1"># MEMBERS TO ENSURE VIDEO IS RECORDED AT THE PROPER PACE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_per_frame</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_to_sleep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_per_frame</span> <span class="o">/</span> <span class="mi">5</span></div>
 
 
 <div class="viewcode-block" id="VideoRecorder.start_recording">
@@ -209,7 +189,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">new_frame_avail</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">frame_count</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">exc</span> <span class="o">=</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to record at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">fps</span><span class="si">}</span><span class="s2"> frames/second.&quot;</span><span class="p">)</span>
+                <span class="n">exc</span> <span class="o">=</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to record at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fps</span><span class="si">}</span><span class="s2"> frames/second.&quot;</span><span class="p">)</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">exc</span>
 
@@ -229,7 +209,7 @@
 <span class="sd">        :returns: the results of a simple calculation of the time the</span>
 <span class="sd">                  next frame should be saved. (in seconds)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_specs</span><span class="o">.</span><span class="n">fps</span></div>
+        <span class="k">return</span> <span class="n">start</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">fps</span></div>
 
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

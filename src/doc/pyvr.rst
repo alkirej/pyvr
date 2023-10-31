@@ -15,7 +15,7 @@ Classes
 .. automodule:: pyvr.AudioInput
     :members:
     :special-members: __init__
-    :exclude-members: lookup_device
+    :exclude-members: lookup_device, SdAttr
 
 .. automodule:: pyvr.AudioRecorder
     :members:

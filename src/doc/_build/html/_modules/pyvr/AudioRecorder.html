@@ -49,7 +49,6 @@
 <span class="sd">    &lt;/div&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">pyaudio</span> <span class="k">as</span> <span class="nn">pa</span>
 <span class="kn">import</span> <span class="nn">threading</span> <span class="k">as</span> <span class="nn">thr</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">wave</span>
@@ -80,10 +79,17 @@
         <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.wav&quot;</span><span class="p">)</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setup audio recorder.&quot;</span><span class="p">)</span>
+        <span class="c1"># MEMBERS USED TO INTERACT WITH THE DISK</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+        <span class="c1"># MEMBERS USED TO INTERACT WITH THE AUDIO HARDWARE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span> <span class="o">=</span> <span class="n">audio_input</span>
+
+        <span class="c1"># MEMBERS USED TO COMMUNICATE TO THE RECORD THREAD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record_thread</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">#  WAKE UP 5 TIMES BETWEEN EACH DISK WRITE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_to_sleep</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">buffer_size</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    - Audio output sent to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
@@ -124,11 +130,10 @@
 <span class="sd">                it becomes available.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;audio-write-thread has started.&quot;</span><span class="p">)</span>
-        <span class="n">audio_interface</span> <span class="o">=</span> <span class="n">pa</span><span class="o">.</span><span class="n">PyAudio</span><span class="p">()</span>  <span class="c1"># Create an interface to PortAudio</span>
 
         <span class="n">wav_file</span> <span class="o">=</span> <span class="n">wave</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
         <span class="n">wav_file</span><span class="o">.</span><span class="n">setnchannels</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span>
-        <span class="n">wav_file</span><span class="o">.</span><span class="n">setsampwidth</span><span class="p">(</span><span class="n">audio_interface</span><span class="o">.</span><span class="n">get_sample_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_size</span><span class="p">))</span>
+        <span class="n">wav_file</span><span class="o">.</span><span class="n">setsampwidth</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">wav_file</span><span class="o">.</span><span class="n">setframerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">audio_input</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">)</span>
 
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>

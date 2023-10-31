@@ -125,7 +125,7 @@ its quality.</p>
     Date:   October 2023</pre>
 </div><dl class="py class">
 <dt class="sig sig-object py" id="pyvr.AudioInput.AudioInput">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AudioInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/AudioInput.html#AudioInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.AudioInput.AudioInput" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AudioInput</span></span><a class="reference internal" href="_modules/pyvr/AudioInput.html#AudioInput"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.AudioInput.AudioInput" title="Link to this definition">¶</a></dt>
 <dd><p>An AudioInput object will start a thread that will monitor the audio stream
 of a linux audio input device. It is designed to work with a with clause.</p>
 <div class="admonition seealso">
@@ -134,15 +134,10 @@ of a linux audio input device. It is designed to work with a with clause.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyvr.AudioInput.AudioInput.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/AudioInput.html#AudioInput.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.AudioInput.AudioInput.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/AudioInput.html#AudioInput.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.AudioInput.AudioInput.__init__" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">About<span class="colon">:</span></dt>
 <dd class="field-odd"><p>AudioInput constructor</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>sample_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – how many bits to use for each sample.  This value should be
-a pulse audio constant (paInt8, paInt16, paInt24, paInt32).
-Passing 16 will probably not get you a 16-bit sample size.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -307,7 +302,7 @@ data retreived from the AudioInput object.</p>
     Date:   October 2023</pre>
 </div><dl class="py class">
 <dt class="sig sig-object py" id="pyvr.VideoCard.VideoCard">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/dev/video0',</span> <span class="pre">720,</span> <span class="pre">1280)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoCard.html#VideoCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoCard.VideoCard" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoCard</span></span><a class="reference internal" href="_modules/pyvr/VideoCard.html#VideoCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoCard.VideoCard" title="Link to this definition">¶</a></dt>
 <dd><p>A VideoCard object will start a thread that will monitor the video stream
 of a linux video device. It is designed to work with a with clause.</p>
 <div class="admonition seealso">
@@ -316,13 +311,10 @@ of a linux video device. It is designed to work with a with clause.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyvr.VideoCard.VideoCard.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('/dev/video0',</span> <span class="pre">720,</span> <span class="pre">1280)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoCard.html#VideoCard.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoCard.VideoCard.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoCard.html#VideoCard.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoCard.VideoCard.__init__" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">About<span class="colon">:</span></dt>
 <dd class="field-odd"><p>VideoCard object constructor.</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>specs</strong> (<a class="reference internal" href="#pyvr.VideoCard.VideoReadSpecs" title="pyvr.VideoCard.VideoReadSpecs"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoReadSpecs</span></code></a>) – device and screen size of the video capture device.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -393,7 +385,7 @@ corresponding thread..</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoReadSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyvr.VideoCard.VideoReadSpecs" title="Link to this definition">¶</a></dt>
 <dd><p><strong>Named tuple</strong> used to pass the necessary information about the
 video device to the <a class="reference internal" href="#pyvr.VideoCard.VideoCard" title="pyvr.VideoCard.VideoCard"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoCard</span></code></a>
-object so that it can properly retreive the video data.</p>
+object so that it can properly retrieve the video data.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyvr.VideoCard.VideoReadSpecs.device">
 <span class="sig-name descname"><span class="pre">device</span></span><a class="headerlink" href="#pyvr.VideoCard.VideoReadSpecs.device" title="Link to this definition">¶</a></dt>
@@ -421,7 +413,7 @@ object so that it can properly retreive the video data.</p>
     Date:   October 2023</pre>
 </div><dl class="py class">
 <dt class="sig sig-object py" id="pyvr.VideoRecorder.VideoRecorder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoRecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specs=&lt;pyvr.VideoRecorder.VideoRecorderSpecs</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoRecorder.html#VideoRecorder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoRecorder.VideoRecorder" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoRecorder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoRecorder.html#VideoRecorder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoRecorder.VideoRecorder" title="Link to this definition">¶</a></dt>
 <dd><p>A VideoRecorder object will start a thread that will monitor and record
 video frames supplied by
 <a class="reference internal" href="#pyvr.VideoCard.VideoCard" title="pyvr.VideoCard.VideoCard"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoCard</span></code></a></p>
@@ -431,7 +423,7 @@ video frames supplied by
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyvr.VideoRecorder.VideoRecorder.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specs=&lt;pyvr.VideoRecorder.VideoRecorderSpecs</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoRecorder.html#VideoRecorder.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoRecorder.VideoRecorder.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoRecorder.html#VideoRecorder.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoRecorder.VideoRecorder.__init__" title="Link to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">About<span class="colon">:</span></dt>
 <dd class="field-odd"><p>VideoRecorder constructor</p>
@@ -440,9 +432,6 @@ video frames supplied by
 <dd class="field-even"><ul class="simple">
 <li><p><strong>filename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – filename (currently must end with .mp4) to record video to.</p></li>
 <li><p><strong>card</strong> (<a class="reference internal" href="#pyvr.VideoCard.VideoCard" title="pyvr.VideoCard.VideoCard"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoCard</span></code></a>) – object used to retrieve the video frames from the hardware.</p></li>
-<li><p><strong>specs</strong> (<a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorderSpecs" title="pyvr.VideoRecorder.VideoRecorderSpecs"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoRecorderSpecs</span></code></a>) – setup parameters for this recorder object.  Things like the codec to
-use to record (only “mp4v” currently supported) the video and the
-speed (fps) to record at.</p></li>
 </ul>
 </dd>
 </dl>
@@ -551,30 +540,6 @@ frames retreived from the VideoCard</p>
 
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="pyvr.VideoRecorder.VideoRecorderSpecs">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VideoRecorderSpecs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mp4v'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoRecorder.html#VideoRecorderSpecs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoRecorder.VideoRecorderSpecs" title="Link to this definition">¶</a></dt>
-<dd><p>Class used to pass relevant settings to the
-<a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorder" title="pyvr.VideoRecorder.VideoRecorder"><code class="xref py py-class docutils literal notranslate"><span class="pre">VideoRecorder</span></code></a>
-object so that it can properly record the video to disk.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pyvr.VideoRecorder.VideoRecorderSpecs.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mp4v'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyvr/VideoRecorder.html#VideoRecorderSpecs.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyvr.VideoRecorder.VideoRecorderSpecs.__init__" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">About<span class="colon">:</span></dt>
-<dd class="field-odd"><p>VideoRecorderSpecs constructor</p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>fps</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – frames to record during each second.</p></li>
-<li><p><strong>codec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Codec to use while recording.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -633,10 +598,6 @@ object so that it can properly record the video to disk.</p>
 <li><a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorder.record_next_frame_at"><code class="docutils literal notranslate"><span class="pre">record_next_frame_at()</span></code></a></li>
 <li><a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorder.start_recording"><code class="docutils literal notranslate"><span class="pre">start_recording()</span></code></a></li>
 <li><a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorder.stop_recording"><code class="docutils literal notranslate"><span class="pre">stop_recording()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorderSpecs"><code class="docutils literal notranslate"><span class="pre">VideoRecorderSpecs</span></code></a><ul>
-<li><a class="reference internal" href="#pyvr.VideoRecorder.VideoRecorderSpecs.__init__"><code class="docutils literal notranslate"><span class="pre">__init__()</span></code></a></li>
 </ul>
 </li>
 </ul>
