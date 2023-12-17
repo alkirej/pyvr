@@ -1,9 +1,11 @@
+import calendar as cal
 import cv2
 import datetime as dt
 import enum
 import logging as log
 import optparse as cl  # cl = command line.
 import os
+import sys
 import time
 
 import pyvr
@@ -21,8 +23,10 @@ class CommandLineOpts(str, enum.Enum):
     """
     Enumeration of the command line parameters that can be sent to the application.
     """
+    DELETE = "delete"
     FILE_NAME = "filename"
     RECORD_LENGTH = "record_length"
+    PROMPT = "prompt"
     START_TIME = "start_time"
     STOP_TIME = "stop_time"
 
@@ -90,6 +94,12 @@ def is_valid_time(time_str: str) -> bool:
 def parse_command_line() -> dict:
     parser = cl.OptionParser()
     parser.set_defaults(filename="recording")
+    parser.add_option("--prompt",
+                      dest=CommandLineOpts.PROMPT,
+                      default=False,
+                      action="store_true",
+                      help="Prompt for options via command line."
+                      )
     parser.add_option("--file",
                       dest=CommandLineOpts.FILE_NAME,
                       help="Name of file to store results in (do NOT include an extension)"
@@ -105,6 +115,12 @@ def parse_command_line() -> dict:
     parser.add_option("--stop",
                       dest=CommandLineOpts.STOP_TIME,
                       help="The time to stop recording (hh:mm). Note: 24 hour clock."
+                      )
+    parser.add_option("--del", "--delete",
+                      dest=CommandLineOpts.DELETE,
+                      default=False,
+                      action="store_true",
+                      help="Delete to original video and audio files."
                       )
     options, _ = parser.parse_args()
 
@@ -158,7 +174,8 @@ def compute_end_time(start_time: str, duration: str, stop_time: str) -> None | d
 
 def record(filename_no_ext: str,
            start_recording_at: dt.datetime,
-           stop_recording_at: dt.datetime
+           stop_recording_at: dt.datetime,
+           delete_files: bool
            ) -> None:
     """
     :about: This is the main entrypoint to the pyvr package.  It is likely the only function
@@ -195,7 +212,7 @@ def record(filename_no_ext: str,
     _, _, preview_config = pyvr.load_config()
     width: int = int(preview_config[pyvr.PreviewCfg.WIDTH])
     height: int = int(preview_config[pyvr.PreviewCfg.HEIGHT])
-    interval: int = int(preview_config[pyvr.PreviewCfg.INTERVAL])
+    interval: float = float(preview_config[pyvr.PreviewCfg.INTERVAL])
 
     # WAIT UNTIL WE SHOULD START RECORDING
     if start_recording_at is not None:
@@ -241,23 +258,127 @@ def record(filename_no_ext: str,
                                  f"{filename_no_ext}.{pyvr.RESULT_EXT}"
                                  )
     # delete video and audio files.
-    os.remove(f"{filename_no_ext}.{pyvr.VIDEO_EXT}")
-    os.remove(f"{filename_no_ext}.{pyvr.AUDIO_EXT}")
+    if delete_files:
+        os.remove(f"{filename_no_ext}.{pyvr.VIDEO_EXT}")
+        os.remove(f"{filename_no_ext}.{pyvr.AUDIO_EXT}")
 
     log.info(f"Process complete. Results stored in {filename_no_ext}.{pyvr.RESULT_EXT}")
 
 
+def prompt_for_duration() -> str:
+    print()
+    print("RECORD DURATION")
+    int_hr = int(input("   Hours: "))
+    if int_hr < 0 or int_hr > 4:
+        print("INVALID RECORD DURATION (HOURS)")
+        sys.exit(1)
+    hrs = str(int_hr)
+
+    int_min = int(input("   Minutes (0-59): "))
+    if int_min < 0 or int_min > 59:
+        print("INVALID RECORD DURATION (MINUTES)")
+        sys.exit(1)
+    mins = str(int_min)
+    if len(mins) == 1:
+        mins = f"0{int_min}"
+
+    int_secs = int(input("   Seconds (0-59): "))
+    if int_secs < 0 or int_secs > 59:
+        print("INVALID RECORD DURATION (SECONDS)")
+        sys.exit(1)
+    secs = str(int_secs)
+    if len(secs) == 1:
+        secs = f"0{int_secs}"
+
+    return f"{hrs}:{mins}:{secs}"
+
+
+def prompt_for_filename() -> str:
+    print("Game Date:")
+
+    year = input("   Year: ")
+    int_year = int(year)
+    if int_year < 1950 or int_year > 2100:
+        print("INVALID YEAR.")
+        sys.exit(1)
+
+    int_month = int(input("   Month (1-12): "))
+    month = str(int_month)
+    if int_month < 1 or int_month > 12:
+        print("INVALID MONTH.")
+        sys.exit(1)
+    if len(month) < 2:
+        month = "0" + month
+    _, max_day = cal.monthrange(int_year, int_month)
+    int_day = int(input(f"   Day of the Month (1-{max_day}): "))
+    day = str(int_day)
+    if int_day < 1 or int_day > max_day:
+        print("INVALID DAY OF THE MONTH.")
+        sys.exit(1)
+    if len(day) < 2:
+        day = "0" + day
+
+    print()
+    home = input("   (H)ome or (A)way? ")
+    if home.lower() == "h":
+        vs_str = "vs"
+    elif home.lower() == "a":
+        vs_str = "at"
+    else:
+        print("INVALID RESPONSE. PLEASE SELECT H OR A.")
+        sys.exit(1)
+
+    print()
+    city = input("   Opponent: ")
+    city = city.strip()
+    city = city.replace(" ", "")
+
+    if int_month <= 7:
+        prefix = "1"
+        season = str(int_year)
+    else:
+        prefix = ""
+        season = str(int_year+1)
+
+    print()
+    notes = input("   Note: ")
+    notes = notes.strip()
+    notes = notes.replace(" ", "")
+    if len(notes) > 0:
+        notes = f"-{notes}"
+
+    return f"{year}{month}{day}{vs_str}{city}-s{season}e{prefix}{month}{day}{notes}"
+
+
 def main() -> None:
     cl_opts = parse_command_line()
-    record_at: dt.datetime = compute_start_time(cl_opts[CommandLineOpts.START_TIME])
-    record_until: dt.datetime = compute_end_time(cl_opts[CommandLineOpts.START_TIME],
-                                                 cl_opts[CommandLineOpts.RECORD_LENGTH],
-                                                 cl_opts[CommandLineOpts. STOP_TIME]
-                                                 )
-    record(cl_opts[CommandLineOpts.FILE_NAME],
-           record_at,
-           record_until
-           )
+
+    if cl_opts[CommandLineOpts.PROMPT]:
+        file_name = prompt_for_filename()
+        duration =  prompt_for_duration()
+
+        print(f"Record to:  {file_name}.mkv")
+        print(f"Record for: {duration}")
+
+        start_time: dt.datetime = dt.datetime.now()
+        record(file_name,
+               start_time,
+               compute_end_time(None, duration, None),
+               False
+               )
+        # DELETE EXTRA FILES NOW?
+
+    else:
+        record_at: dt.datetime = compute_start_time(cl_opts[CommandLineOpts.START_TIME])
+        record_until: dt.datetime = compute_end_time(cl_opts[CommandLineOpts.START_TIME],
+                                                     cl_opts[CommandLineOpts.RECORD_LENGTH],
+                                                     cl_opts[CommandLineOpts. STOP_TIME]
+                                                     )
+        record(cl_opts[CommandLineOpts.FILE_NAME],
+               record_at,
+               record_until,
+               cl_opts[CommandLineOpts.DELETE]
+               )
 
 
 if "__main__" == __name__:

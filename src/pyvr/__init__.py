@@ -4,6 +4,7 @@ Routines that can be used to simplify or remove the interaction with the classes
 import cv2
 import logging as log
 import os
+import subprocess as proc
 import time
 
 from ffmpeg import FFmpeg
@@ -17,6 +18,7 @@ VIDEO_EXT = "mp4"
 AUDIO_EXT = "wav"
 RESULT_EXT = "mkv"
 
+FFMPEG_PROC_NAME = "ffmpeg"
 
 def record(filename_no_ext: str) -> None:
     """
@@ -52,7 +54,7 @@ def record(filename_no_ext: str) -> None:
     _, _, preview_config = load_config()
     width: int = int(preview_config[PreviewCfg.WIDTH])
     height: int = int(preview_config[PreviewCfg.HEIGHT])
-    interval: int = int(preview_config[PreviewCfg.INTERVAL])
+    interval: float = float(preview_config[PreviewCfg.INTERVAL])
 
     # Each with line creates its own thread.
     with VideoCard() as vc:
@@ -106,11 +108,34 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
 
     if os.path.isfile(resulting_file):
         os.remove(resulting_file)
-
+    """
     combine_and_compress = (FFmpeg()
                             .input(video_file)
                             .input(audio_file)
-                            .output(resulting_file, {"codec:v": "libx265"})
+                            .output(resulting_file, {"codec:v": "libx265", "codec:a": "ac3", "threads": "0"})
                             )
 
     combine_and_compress.execute()
+    """
+
+    result: proc.CompletedProcess = proc.run(
+        [
+            FFMPEG_PROC_NAME,
+            "-y",
+            "-threads", "0",
+            "-i", video_file,               # video input file
+            "-i", audio_file,               # audio input
+            "-map", "0:v:0",                # Use 1st video stream
+            "-map", "1:a",                  # Keep all audio streams
+            "-map", "0:s?",                 # Keep all subtitles
+            "-c:s", "srt",                  # subtitle codec (matches original)
+            "-c:v", "libx265",              # video codec (hevc/h.265)
+            "-c:a", "ac3",                  # audio codec (aac)
+            "-threads", "0",
+            resulting_file                  # output file name
+        ],
+        capture_output=False,
+    )
+
+    if result.returncode != 0:
+        raise Exception(f"ffmpeg returned errorcode {result.returncode}")
