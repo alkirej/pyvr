@@ -109,6 +109,7 @@ class AudioInput:
         :about: Code executed by the audio-capture-thread. Constantly examine the audio
                 from the input device and save it to a file when it is available.
         """
+        problem_count: int = 0
         log.info("audio-capture-thread has started.")
         audio_interface = pa.PyAudio()  # Create an interface to PortAudio
         audio_stream = audio_interface.open(format=pa.paInt16,
@@ -122,9 +123,13 @@ class AudioInput:
         while self.listening:
             new_audio = audio_stream.read(self.buffer_size)
             if self.new_audio_sample:
-                exc = IOError("Cannot keep up with audio.")
-                log.exception(exc)
-                raise exc
+                problem_count += 1
+                log.warning(f"Trouble with audio recording. ({problem_count})")
+                print(f"Trouble with audio recording. ({problem_count})")
+                if problem_count >= 25:
+                    exc = IOError(f"Cannot keep up with audio. ({problem_count})")
+                    log.exception(exc)
+                    raise exc
 
             self.latest_audio = new_audio
             self.new_audio_sample = True
