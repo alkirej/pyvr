@@ -122,7 +122,7 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
         [
             FFMPEG_PROC_NAME,
             "-y",
-            "-threads", "0",
+            "-threads", "1",
             "-i", video_file,               # video input file
             "-i", audio_file,               # audio input
             "-map", "0:v:0",                # Use 1st video stream
@@ -131,7 +131,7 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
             "-c:s", "srt",                  # subtitle codec (matches original)
             "-c:v", "libx265",              # video codec (hevc/h.265)
             "-c:a", "ac3",                  # audio codec (aac)
-            "-threads", "0",
+            "-threads", "1",
             resulting_file                  # output file name
         ],
         capture_output=False,
