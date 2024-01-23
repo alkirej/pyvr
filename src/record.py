@@ -7,6 +7,7 @@ import optparse as cl  # cl = command line.
 import os
 import sys
 import time
+import typing as typ
 
 import pyvr
 
@@ -151,7 +152,7 @@ def compute_start_time(start_time: str) -> dt.datetime:
     return start_at
 
 
-def compute_end_time(start_time: str, duration: str, stop_time: str) -> None | dt.datetime:
+def compute_end_time(start_time: typ.Optional[str], duration: str, stop_time: typ.Optional[str]) -> None | dt.datetime:
     if duration is None and stop_time is None:
         return None
 
@@ -172,6 +173,14 @@ def compute_end_time(start_time: str, duration: str, stop_time: str) -> None | d
     return start_at + dt.timedelta(hours=hrs, minutes=mins, seconds=secs)
 
 
+def display_time_remaining(seconds_left: int) -> None:
+    hours: int = seconds_left // (60*60)
+    mins: int = (seconds_left - hours * (60*60)) // 60
+    secs: int = seconds_left % 60
+
+    print(f"Time remaining: \033[92m\033[1m{hours}:{mins:02}:{secs:02}\033[0m\r", end="")
+
+
 def record(filename_no_ext: str,
            start_recording_at: dt.datetime,
            stop_recording_at: dt.datetime,
@@ -186,6 +195,7 @@ def record(filename_no_ext: str,
                             the .mkv file.
     :param start_recording_at: date/time the recording should start
     :param stop_recording_at: date/time the recording should complete
+    :param delete_files:
     :Side Effect: Creation of a .mkv file recording the requested audio and video.
 
     .. note::
@@ -246,10 +256,14 @@ def record(filename_no_ext: str,
                             current_time = dt.datetime.now()
                             if current_time > stop_recording_at:
                                 break
+                            else:
+                                seconds_left: int = (stop_recording_at - current_time).seconds
+                                display_time_remaining(seconds_left)
 
                         # Save some cpu for other people. Sleep and only show an occasional update.
                         time.sleep(interval)
 
+    print()
     cv2.destroyWindow("Preview")
     log.info("Combine and compress recording information.")
     print("Processing final results.  Please be patient ...")
@@ -355,7 +369,7 @@ def main() -> None:
 
     if cl_opts[CommandLineOpts.PROMPT]:
         file_name = prompt_for_filename()
-        duration =  prompt_for_duration()
+        duration = prompt_for_duration()
 
         print(f"Record to:  {file_name}.mkv")
         print(f"Record for: {duration}")
