@@ -271,6 +271,7 @@ def record(filename_no_ext: str,
                                  f"{filename_no_ext}.{pyvr.AUDIO_EXT}",
                                  f"{filename_no_ext}.{pyvr.RESULT_EXT}"
                                  )
+
     # delete video and audio files.
     if delete_files:
         os.remove(f"{filename_no_ext}.{pyvr.VIDEO_EXT}")

@@ -4,10 +4,9 @@ Routines that can be used to simplify or remove the interaction with the classes
 import cv2
 import logging as log
 import os
-import subprocess as proc
 import time
 
-from ffmpeg import FFmpeg
+import msutils as msu
 
 from .AudioRecorder import AudioInput, AudioRecorder
 from .configuration import load_config, PreviewCfg
@@ -19,6 +18,7 @@ AUDIO_EXT = "wav"
 RESULT_EXT = "mkv"
 
 FFMPEG_PROC_NAME = "ffmpeg"
+
 
 def record(filename_no_ext: str) -> None:
     """
@@ -117,25 +117,22 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
 
     combine_and_compress.execute()
     """
-
-    result: proc.CompletedProcess = proc.run(
+    ffmpeg_args: [str] = \
         [
             FFMPEG_PROC_NAME,
             "-y",
             "-threads", "1",
-            "-i", video_file,               # video input file
-            "-i", audio_file,               # audio input
-            "-map", "0:v:0",                # Use 1st video stream
-            "-map", "1:a",                  # Keep all audio streams
-            "-map", "0:s?",                 # Keep all subtitles
-            "-c:s", "srt",                  # subtitle codec (matches original)
-            "-c:v", "libx265",              # video codec (hevc/h.265)
-            "-c:a", "ac3",                  # audio codec (aac)
+            "-i", video_file,  # video input file
+            "-i", audio_file,  # audio input
+            "-map", "0:v:0",  # Use 1st video stream
+            "-map", "1:a",  # Keep all audio streams
+            "-map", "0:s?",  # Keep all subtitles
+            "-c:s", "srt",  # subtitle codec (matches original)
+            "-c:v", "libx265",  # video codec (hevc/h.265)
+            "-c:a", "ac3",  # audio codec (aac)
             "-threads", "1",
-            resulting_file                  # output file name
-        ],
-        capture_output=False,
-    )
+            resulting_file  # output file name
+        ]
 
-    if result.returncode != 0:
-        raise Exception(f"ffmpeg returned errorcode {result.returncode}")
+    msu.run_ffmpeg(ffmpeg_args)
+    
