@@ -108,17 +108,10 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
 
     if os.path.isfile(resulting_file):
         os.remove(resulting_file)
-    """
-    combine_and_compress = (FFmpeg()
-                            .input(video_file)
-                            .input(audio_file)
-                            .output(resulting_file, {"codec:v": "libx265", "codec:a": "ac3", "threads": "0"})
-                            )
 
-    combine_and_compress.execute()
-    """
     ffmpeg_args: [str] = \
         [
+            "nice",
             FFMPEG_PROC_NAME,
             "-y",
             "-threads", "1",
@@ -135,4 +128,3 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
         ]
 
     msu.run_ffmpeg(ffmpeg_args)
-    

@@ -68,7 +68,7 @@ def main() -> None:
     print(f"Record to:  {full_path}.mkv")
     print(f"Record for: {duration}")
 
-    os.mkdir(dir_name)
+    os.makedirs(dir_name, exist_ok=True)
 
     start_time: dt.datetime = dt.datetime.now()
     record(full_path,
