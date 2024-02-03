@@ -48,13 +48,23 @@ def prompt_for_movie_info() -> (str, str):
         series: str = input("    Series name: ")
 
         if contains_pun(series):
-            print("NO PUNCTUATION ALLOWED IN MOVIE NAMES.  PLEASE TRY AGAIN WITHOUT PUNCTUATION.")
+            print("NO PUNCTUATION ALLOWED IN NAMES.  PLEASE TRY AGAIN WITHOUT PUNCTUATION.")
             sys.exit(1)
 
         season: int = accept_int("Season #")
         episode: int = accept_int("Episode #")
 
-        return f"{series}/Season {season}", f"{series}-s{season}e{episode}"
+        zero_maybe: str = ""
+        if episode < 10:
+            zero_maybe = "0"
+
+        return f"{series}/Season {season}", f"{series}-s{season}e{zero_maybe}{episode}"
+
+
+def prompt_to_start() -> None:
+    print()
+    input("START video AND press ENTER simultaneously now: ")
+    print()
 
 
 def main() -> None:
@@ -63,6 +73,8 @@ def main() -> None:
 
     dir_name, file_name = prompt_for_movie_info()
     duration = prompt_for_duration()
+    prompt_to_start()
+
     full_path = os.path.join(dir_name, file_name)
 
     print(f"Record to:  {full_path}.mkv")

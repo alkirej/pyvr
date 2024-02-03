@@ -283,13 +283,13 @@ def record(filename_no_ext: str,
 def prompt_for_duration() -> str:
     print()
     print("RECORD DURATION")
-    int_hr = int(input("   Hours: "))
+    int_hr = int(input("    Hours: "))
     if int_hr < 0 or int_hr > 4:
         print("INVALID RECORD DURATION (HOURS)")
         sys.exit(1)
     hrs = str(int_hr)
 
-    int_min = int(input("   Minutes (0-59): "))
+    int_min = int(input("    Minutes (0-59): "))
     if int_min < 0 or int_min > 59:
         print("INVALID RECORD DURATION (MINUTES)")
         sys.exit(1)
@@ -297,7 +297,7 @@ def prompt_for_duration() -> str:
     if len(mins) == 1:
         mins = f"0{int_min}"
 
-    int_secs = int(input("   Seconds (0-59): "))
+    int_secs = int(input("    Seconds (0-59): "))
     if int_secs < 0 or int_secs > 59:
         print("INVALID RECORD DURATION (SECONDS)")
         sys.exit(1)
