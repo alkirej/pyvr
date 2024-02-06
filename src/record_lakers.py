@@ -1,10 +1,17 @@
 from record import *
 
 
+def prompt_to_start() -> None:
+    print()
+    input("START video AND press ENTER simultaneously now: ")
+    print()
+
+
 def main() -> None:
     file_name = prompt_for_filename()
     duration = prompt_for_duration()
-
+    prompt_to_start()
+    
     print(f"Record to:  {file_name}.mkv")
     print(f"Record for: {duration}")
 
