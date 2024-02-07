@@ -3,6 +3,24 @@ from record import *
 import string
 import sys
 
+LAST_SERIES_NAME_FILE: str = ".last_series_name"
+
+
+def save_previous_series(series_name: str) -> None:
+    with open(LAST_SERIES_NAME_FILE, "w") as f:
+        f.write(series_name)
+
+
+def get_previous_series() -> str:
+    try:
+        with open(LAST_SERIES_NAME_FILE, "r") as f:
+            text: str = f.read()
+            if "\n" in text:
+                return ""
+
+        return text
+    except FileNotFoundError:
+        return ""
 
 def contains_pun(text: str) -> bool:
     return any(ch in string.punctuation for ch in text)
@@ -45,11 +63,16 @@ def prompt_for_movie_info() -> (str, str):
         return file_name, file_name
 
     else:
-        series: str = input("    Series name: ")
+        prev_series: str = get_previous_series()
+        series: str = input(f"    Series name [{prev_series}]: ")
 
         if contains_pun(series):
             print("NO PUNCTUATION ALLOWED IN NAMES.  PLEASE TRY AGAIN WITHOUT PUNCTUATION.")
             sys.exit(1)
+        if series == "":
+            series = prev_series
+
+        save_previous_series(series)
 
         season: int = accept_int("Season #")
         episode: int = accept_int("Episode #")
