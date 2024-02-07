@@ -1,15 +1,19 @@
-import pyaudio
-import sounddevice as sd
+import cv2
 
-pa = pyaudio.PyAudio()
-num = pa.get_device_count()
-
-print(num)
-
-for idx in range(num):
-    info = pa.get_device_info_by_index(idx)
-    if info.get("maxInputChannels") > 0:
-        print(info)
+video = cv2.VideoCapture("/dev/video0")
+video.set(cv2.CAP_PROP_FRAME_HEIGHT, 2160)
+video.set(cv2.CAP_PROP_FRAME_WIDTH, 3840)
 
 
-print( sd.query_devices() )
+success = True
+while success:
+    success, frame = video.read()
+    keypress = cv2.waitKey(1)
+    if keypress & 0xFF == 27:
+        break
+
+    cv2.imshow("Preview", frame)
+
+    height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    print(f"({width}, {height})")

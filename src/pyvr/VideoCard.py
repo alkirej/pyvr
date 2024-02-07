@@ -50,6 +50,8 @@ class VideoCard:
         self.device: str = video_config[VideoCfg.DEVICE]
 
         self.vid_source: cv2.VideoCapture = cv2.VideoCapture(self.device)
+        self.vid_source.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+        self.vid_source.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
 
         # MEMBERS FOR INTER-THREAD COMMUNICATION
         self.viewing: bool = False
