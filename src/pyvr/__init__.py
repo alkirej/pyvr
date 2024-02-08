@@ -30,10 +30,10 @@ def record(filename_no_ext: str) -> None:
                             the .mkv file.
     :Side Effect: Creation of a .mkv file recording the requested audio and video.
 
-    .. note::
+    note::
         This routine makes a great example of how to interact with the classes in this package.
 
-            .. code-block:: python
+            code-block:: python
                 :caption: Sample Code using the AudioRecorder and VideoRecorder classes.
 
                     with VideoCard() as vc:
@@ -120,7 +120,7 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
             "-map", "0:v:0",  # Use 1st video stream
             "-map", "1:a",  # Keep all audio streams
             "-map", "0:s?",  # Keep all subtitles
-            "-c:s", "srt",  # subtitle codec (matches original)
+            "-c:s", "mov_text",  # subtitle codec (matches original)
             "-c:v", "libx265",  # video codec (hevc/h.265)
             "-c:a", "ac3",  # audio codec (aac)
             "-threads", "1",
