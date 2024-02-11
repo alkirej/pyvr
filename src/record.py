@@ -237,9 +237,9 @@ def record(filename_no_ext: str,
 
     # Each with line creates its own thread.
     with pyvr.VideoCard() as vc:
-        print(f"Record resolution: ({vc.width}, {vc.height})")
-        log.debug(f"Record resolution: ({vc.width}, {vc.height})")
         with pyvr.VideoRecorder(f"{filename_no_ext}.{pyvr.VIDEO_EXT}", vc):
+            print(f"Record resolution: ({vc.width}, {vc.height})")
+            log.debug(f"Record resolution: ({vc.width}, {vc.height})")
             with pyvr.AudioInput() as ai:
                 with pyvr.AudioRecorder(ai, filename=f"{filename_no_ext}.{pyvr.AUDIO_EXT}"):
                     while True:

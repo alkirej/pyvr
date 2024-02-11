@@ -111,6 +111,7 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
 
     ffmpeg_args: [str] = \
         [
+            "nice",
             FFMPEG_PROC_NAME,
             "-y",
             "-threads", "1",
