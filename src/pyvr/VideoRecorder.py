@@ -49,10 +49,9 @@ class VideoRecorder:
         self.codec = cv2.VideoWriter.fourcc(*video_config[VideoCfg.CODEC])
         self.width = int(video_config[VideoCfg.WIDTH])
         self.height = int(video_config[VideoCfg.HEIGHT])
-        try:
-            self.pre_start_delay = float(video_config[VideoCfg.PRE_START_DELAY])
-        except KeyError:
-            self.pre_start_delay = 0.0
+        self.pre_start_delay = float(video_config[VideoCfg.PRE_START_DELAY])
+
+        log.debug(f"Video startup delay: {self.pre_start_delay} seconds.")
 
         log.debug(f"    - codec = {self.codec}")
         log.debug(f"    - fps   = {self.fps}")

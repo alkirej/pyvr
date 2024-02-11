@@ -24,6 +24,7 @@ class AudioCfg(str, enum.Enum):
     """
     DEVICE_NAME = "devicename"
     PRE_START_DELAY = "PreStartDelay"
+    SECS_OF_BUFFER = "SecsOfBuffer"
 
 
 class VideoCfg(str, enum.Enum):
@@ -69,6 +70,8 @@ def load_config() -> (dict, dict):
         # LOAD EACH SECTION AND ENSURE REQUIRED VALUES WERE PROVIDED
         audio_config = config["AUDIO"]
         ensure_exists(audio_config[AudioCfg.DEVICE_NAME])
+        audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0.0")
+        audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
 
         log.debug("Load [VIDEO] section from pyvr.ini")
         video_config = config["VIDEO"]
@@ -77,6 +80,7 @@ def load_config() -> (dict, dict):
         ensure_exists(video_config[VideoCfg.HEIGHT])
         ensure_exists(video_config[VideoCfg.FPS])
         ensure_exists(video_config[VideoCfg.CODEC])
+        video_config.setdefault(VideoCfg.PRE_START_DELAY, "0.0")
 
         log.debug("Load [PREVIEW] section from pyvr.ini")
         preview_config = config["PREVIEW"]

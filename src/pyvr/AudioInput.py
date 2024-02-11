@@ -63,11 +63,10 @@ class AudioInput:
         # CONFIGURE/SETUP FOR THE AUDIO INPUT DEVICE (AKA: MICROPHONE)
         audio_config, _, _ = load_config()
 
-        try:
-            self.pre_start_delay = float(audio_config[AudioCfg.PRE_START_DELAY])
-        except KeyError:
-            self.pre_start_delay = 0.0
+        self.pre_start_delay = float(audio_config[AudioCfg.PRE_START_DELAY])
+        self.seconds_of_buffer: float = float(audio_config[AudioCfg.SECS_OF_BUFFER])
 
+        log.debug(f"Audio startup delay: {self.pre_start_delay} seconds.")
         audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
         if audio_input_device is None:
             log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')
@@ -80,7 +79,7 @@ class AudioInput:
 
         # SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.
         self.sample_rate: int = int(audio_input_device[SdAttr.SAMPLE_RATE])
-        self.buffer_size: int = int(self.sample_rate)
+        self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
 
         # NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)
         self.channels: int = audio_input_device[SdAttr.INPUT_CHANNELS]
