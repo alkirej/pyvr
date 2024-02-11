@@ -76,6 +76,8 @@ class AudioRecorder:
                 the status of the AudioInput device and saves the audio data as
                 it becomes available.
         """
+        log.info("audio-write-thread is starting.")
+        time.sleep(self.audio_input.pre_start_delay)
         log.info("audio-write-thread has started.")
 
         wav_file = wave.open(self.filename, 'wb')

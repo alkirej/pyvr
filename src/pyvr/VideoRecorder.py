@@ -49,7 +49,10 @@ class VideoRecorder:
         self.codec = cv2.VideoWriter.fourcc(*video_config[VideoCfg.CODEC])
         self.width = int(video_config[VideoCfg.WIDTH])
         self.height = int(video_config[VideoCfg.HEIGHT])
-        self.pre_start_delay = float(video_config[VideoCfg.PRE_START_DELAY])
+        try:
+            self.pre_start_delay = float(video_config[VideoCfg.PRE_START_DELAY])
+        except KeyError:
+            self.pre_start_delay = 0.0
 
         log.debug(f"    - codec = {self.codec}")
         log.debug(f"    - fps   = {self.fps}")
@@ -116,8 +119,9 @@ class VideoRecorder:
         :note:  A log entry is written at the conclusion of recording indicating
                 the speed of the recording.
         """
-        log.info("video-write-thread has started.")
+        log.info("video-write-thread is starting.")
         time.sleep(self.pre_start_delay)
+        log.info("video-write-thread finished started.")
         start_time = time.monotonic()
         while self.recording:
             record_at = self.record_next_frame_at(start_time)

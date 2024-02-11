@@ -63,6 +63,11 @@ class AudioInput:
         # CONFIGURE/SETUP FOR THE AUDIO INPUT DEVICE (AKA: MICROPHONE)
         audio_config, _, _ = load_config()
 
+        try:
+            self.pre_start_delay = float(audio_config[AudioCfg.PRE_START_DELAY])
+        except KeyError:
+            self.pre_start_delay = 0.0
+
         audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
         if audio_input_device is None:
             log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')

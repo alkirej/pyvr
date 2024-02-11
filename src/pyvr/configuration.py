@@ -23,6 +23,7 @@ class AudioCfg(str, enum.Enum):
     and their corresponding name in the ini file.
     """
     DEVICE_NAME = "devicename"
+    PRE_START_DELAY = "PreStartDelay"
 
 
 class VideoCfg(str, enum.Enum):
@@ -76,7 +77,6 @@ def load_config() -> (dict, dict):
         ensure_exists(video_config[VideoCfg.HEIGHT])
         ensure_exists(video_config[VideoCfg.FPS])
         ensure_exists(video_config[VideoCfg.CODEC])
-        ensure_exists(video_config[VideoCfg.PRE_START_DELAY])
 
         log.debug("Load [PREVIEW] section from pyvr.ini")
         preview_config = config["PREVIEW"]
