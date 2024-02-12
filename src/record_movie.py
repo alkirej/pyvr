@@ -1,6 +1,7 @@
 from record import *
 
 import string
+import subprocess as proc
 import sys
 
 LAST_SERIES_NAME_FILE: str = ".last_series_name"
@@ -21,6 +22,7 @@ def get_previous_series() -> str:
         return text
     except FileNotFoundError:
         return ""
+
 
 def contains_pun(text: str) -> bool:
     return any(ch in string.punctuation for ch in text)
@@ -91,12 +93,17 @@ def prompt_to_start() -> None:
 
 
 def main() -> None:
-    print()
-    print()
+    play_video_args: [str] = \
+        ["python", "/home/jeff/git/pyvr/src/play_video.py"]
 
-    dir_name, file_name = prompt_for_movie_info()
-    duration = prompt_for_duration()
-    prompt_to_start()
+    with proc.Popen(play_video_args, text=True, stderr=proc.PIPE) as process:
+        print()
+        print()
+
+        dir_name, file_name = prompt_for_movie_info()
+        duration = prompt_for_duration()
+        prompt_to_start()
+        process.terminate()
 
     full_path = os.path.join(dir_name, file_name)
 

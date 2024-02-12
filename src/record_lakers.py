@@ -1,5 +1,6 @@
 from record import *
 
+import subprocess as proc
 
 def prompt_to_start() -> None:
     print()
@@ -8,9 +9,16 @@ def prompt_to_start() -> None:
 
 
 def main() -> None:
-    file_name = prompt_for_filename()
-    duration = prompt_for_duration()
-    prompt_to_start()
+    play_video_args: [str] = \
+        ["python", "/home/jeff/git/pyvr/src/play_video.py"]
+
+    with proc.Popen(play_video_args, text=True, stderr=proc.PIPE) as process:
+        print()
+        print()
+        file_name = prompt_for_filename()
+        duration = prompt_for_duration()
+        prompt_to_start()
+        process.terminate()
 
     print(f"Record to:  {file_name}.mkv")
     print(f"Record for: {duration}")
