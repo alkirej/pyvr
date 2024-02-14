@@ -26,6 +26,8 @@ class AudioCfg(str, enum.Enum):
     PRE_START_DELAY = "PreStartDelay"
     SECS_OF_BUFFER = "SecsOfBuffer"
     AUDIO_LIBRARY = "library"
+    SAMPLE_RATE = "SampleRate"
+    CHANNEL_COUNT = "AudioChannelCount"
 
 
 class VideoCfg(str, enum.Enum):
@@ -74,6 +76,10 @@ def load_config() -> (dict, dict):
         audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0.0")
         audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
         audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
+
+        if audio_config[AudioCfg.AUDIO_LIBRARY].lower() == "pyaudio":
+            ensure_exists(audio_config[AudioCfg.SAMPLE_RATE])
+            ensure_exists(audio_config[AudioCfg.CHANNEL_COUNT])
 
         log.debug("Load [VIDEO] section from pyvr.ini")
         video_config = config["VIDEO"]

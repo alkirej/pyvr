@@ -65,34 +65,41 @@ class AudioInput:
         audio_config, _, _ = load_config()
 
         audio_library_name: str = audio_config[AudioCfg.AUDIO_LIBRARY]
-        assert (audio_library_name.lower() == "pyaudio" or audio_library_name == "alsaaudio")
+        assert (audio_library_name.lower() == "pyaudio" or audio_library_name.lower() == "alsaaudio")
         self.audio_lib: str = audio_library_name.lower()
         if self.audio_lib == "pyaudio":
-            self.thread_target = AudioInput.pyaudio_listen
+            self.thread_target = self.pyaudio_listen
         else:
-            self.thread_target = AudioInput.alsaaudio_listen
+            self.thread_target = self.alsaaudio_listen
 
         self.pre_start_delay = float(audio_config[AudioCfg.PRE_START_DELAY])
         self.seconds_of_buffer: float = float(audio_config[AudioCfg.SECS_OF_BUFFER])
 
-        log.debug(f"Audio startup delay: {self.pre_start_delay} seconds.")
-        audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
-        if audio_input_device is None:
-            log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')
-            raise OSError(f'Audio input device {audio_config[AudioCfg.DEVICE_NAME]} not found.')
+        if audio_library_name.lower() == "pyaudio":
+            log.debug(f"Audio startup delay: {self.pre_start_delay} seconds.")
+            audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
+            if audio_input_device is None:
+                log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')
+                raise OSError(f'Audio input device {audio_config[AudioCfg.DEVICE_NAME]} not found.')
 
-        log.debug(f'Using audio device: {audio_input_device[SdAttr.NAME]}')
+            log.debug(f'Using audio device: {audio_input_device[SdAttr.NAME]}')
 
-        # LINUX'S INDEX TO THE MIC WE WILL USE
-        self.audio_device_name: str = audio_config[AudioCfg.DEVICE_NAME]
-        self.audio_device_idx: int = audio_input_device[SdAttr.INDEX]
+            # LINUX'S INDEX TO THE MIC WE WILL USE
+            self.audio_device_name: str = audio_config[AudioCfg.DEVICE_NAME]
+            self.audio_device_idx: int = audio_input_device[SdAttr.INDEX]
 
-        # SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.
-        self.sample_rate: int = int(audio_input_device[SdAttr.SAMPLE_RATE])
-        self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
+            # SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.
+            self.sample_rate: int = int(audio_input_device[SdAttr.SAMPLE_RATE])
+            self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
 
-        # NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)
-        self.channels: int = audio_input_device[SdAttr.INPUT_CHANNELS]
+            # NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)
+            self.channels: int = audio_input_device[SdAttr.INPUT_CHANNELS]
+
+        else:
+            self.audio_device_name: str = audio_config[AudioCfg.DEVICE_NAME]
+            self.sample_rate: int = int(audio_config[AudioCfg.SAMPLE_RATE])
+            self.channels: int = int(audio_config[AudioCfg.CHANNEL_COUNT])
+            self.buffer_size = int(self.channels * self.sample_rate * self.seconds_of_buffer)
 
         log.debug(f"    - channels    = {self.channels}")
         log.debug(f"    - sample rate = {self.sample_rate}")
@@ -124,7 +131,7 @@ class AudioInput:
         audio_stream = aa.PCM(device=self.audio_device_name, type=aa.PCM_CAPTURE, mode=aa.PCM_NORMAL)
         audio_stream.setchannels(self.channels)
         audio_stream.setrate(self.sample_rate)
-        audio_stream.setperiodsize(self.sample_rate * self.seconds_of_buffer)
+        audio_stream.setperiodsize(int(self.sample_rate * self.seconds_of_buffer))
         audio_stream.setformat(aa.PCM_FORMAT_S16_LE)
 
         while self.listening:
