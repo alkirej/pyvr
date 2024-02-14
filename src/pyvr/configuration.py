@@ -48,9 +48,10 @@ class PreviewCfg(str, enum.Enum):
     Enumeration of the video preview parameters that can be set via the .ini file
     and their corresponding name in the ini file.
     """
-    INTERVAL = "intervalinsecs"
-    HEIGHT = "height"
-    WIDTH = "width"
+    INTERVAL = "IntervalInSecs"
+    HEIGHT = "Height"
+    WIDTH = "Width"
+    PLAYER_SCALE = "PreRecordScaling"
 
 
 # LOAD CONFIGURATION
@@ -95,6 +96,7 @@ def load_config() -> (dict, dict):
         ensure_exists(preview_config[PreviewCfg.INTERVAL])
         ensure_exists(preview_config[PreviewCfg.WIDTH])
         ensure_exists(preview_config[PreviewCfg.HEIGHT])
+        preview_config.setdefault(preview_config[PreviewCfg.PLAYER_SCALE], "100")
 
     except KeyError as ke:
         print()
