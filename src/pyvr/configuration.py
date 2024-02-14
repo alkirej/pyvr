@@ -96,7 +96,7 @@ def load_config() -> (dict, dict):
         ensure_exists(preview_config[PreviewCfg.INTERVAL])
         ensure_exists(preview_config[PreviewCfg.WIDTH])
         ensure_exists(preview_config[PreviewCfg.HEIGHT])
-        preview_config.setdefault(preview_config[PreviewCfg.PLAYER_SCALE], "100")
+        preview_config.setdefault(PreviewCfg.PLAYER_SCALE, "100")
 
     except KeyError as ke:
         print()

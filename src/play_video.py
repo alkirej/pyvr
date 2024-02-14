@@ -8,8 +8,8 @@ def main() -> None:
     _, _, preview_config = pyvr.load_config()
 
     scale: float = int(preview_config[pyvr.PreviewCfg.PLAYER_SCALE]) / 100.0
-    width: int = int(preview_config[pyvr.PreviewCfg.WIDTH] * scale)
-    height: int = int(preview_config[pyvr.PreviewCfg.HEIGHT] * scale)
+    width: int = int(int(preview_config[pyvr.PreviewCfg.WIDTH]) * scale)
+    height: int = int(int(preview_config[pyvr.PreviewCfg.HEIGHT]) * scale)
 
     with pyvr.VideoCard() as vc:
         while True:
