@@ -22,9 +22,10 @@ class AudioCfg(str, enum.Enum):
     Enumeration of the audio parameters that can be set via the .ini file
     and their corresponding name in the ini file.
     """
-    DEVICE_NAME = "devicename"
+    DEVICE_NAME = "DeviceName"
     PRE_START_DELAY = "PreStartDelay"
     SECS_OF_BUFFER = "SecsOfBuffer"
+    AUDIO_LIBRARY = "library"
 
 
 class VideoCfg(str, enum.Enum):
@@ -32,11 +33,11 @@ class VideoCfg(str, enum.Enum):
     Enumeration of the video parameters that can be set via the .ini file
     and their corresponding name in the ini file.
     """
-    CODEC = "codec"
-    DEVICE = "device"
-    FPS = "fps"
-    HEIGHT = "height"
-    WIDTH = "width"
+    CODEC = "Codec"
+    DEVICE = "Device"
+    FPS = "FPS"
+    HEIGHT = "Height"
+    WIDTH = "Width"
     PRE_START_DELAY = "PreStartDelay"
 
 
@@ -72,6 +73,7 @@ def load_config() -> (dict, dict):
         ensure_exists(audio_config[AudioCfg.DEVICE_NAME])
         audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0.0")
         audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
+        audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
 
         log.debug("Load [VIDEO] section from pyvr.ini")
         video_config = config["VIDEO"]
