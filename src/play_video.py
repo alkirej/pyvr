@@ -5,11 +5,18 @@ import pyvr
 
 
 def main() -> None:
+    _, _, preview_config = pyvr.load_config()
+
+    scale: float = int(preview_config[pyvr.PreviewCfg.PLAYER_SCALE]) / 100.0
+    width: int = int(preview_config[pyvr.PreviewCfg.WIDTH] * scale)
+    height: int = int(preview_config[pyvr.PreviewCfg.HEIGHT] * scale)
+
     with pyvr.VideoCard() as vc:
         while True:
             # Preview the video being recorded.
             f = vc.most_recent_frame()
-            cv2.imshow("Currently Playing", f)
+            resized = cv2.resize(f, (width, height))
+            cv2.imshow("Currently Playing", resized)
 
             # Stop/end recording when escape key is pressed.
             keypress = cv2.waitKey(1)
