@@ -48,6 +48,8 @@ class VideoCard:
         self.width: int = int(video_config[VideoCfg.WIDTH])
         self.height: int = int(video_config[VideoCfg.HEIGHT])
         self.device: str = video_config[VideoCfg.DEVICE]
+        self.fps: int = int(video_config[VideoCfg.FPS])
+        self.time_to_sleep: float = (1.0 / self.fps) / 3
 
         self.vid_source: cv2.VideoCapture = cv2.VideoCapture(self.device)
         self.vid_source.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
@@ -88,6 +90,7 @@ class VideoCard:
             valid, frame = self.vid_source.read()
             if valid:
                 self.latest_frame = frame
+            time.sleep(self.time_to_sleep)
 
     def most_recent_frame(self) -> bytes:
         """
