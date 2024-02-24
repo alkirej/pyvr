@@ -42,7 +42,7 @@ class VideoPlayer(VideoHandler):
         audio_config, _, preview_config = load_config()
         self.video_buffer: [bytes] = []
         if bool(audio_config[AudioCfg.SYNC_PLAYER]):
-            frame_count: int = math.ceil(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps)
+            frame_count: int = math.ceil(float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps))
             self.buffer_frame_count = math.ceil(frame_count - int(1.6*self.card.fps))
         else:
             self.buffer_frame_count = 1
@@ -101,65 +101,10 @@ class VideoPlayer(VideoHandler):
 
             self.new_frame_avail = False
         else:
-            exc = IOError(f"Unable to display at {self.fps} frames/second.")
+            exc = IOError(f"Unable to display at {self.card.fps} frames/second.")
             log.exception(exc)
             raise exc
 
         keypress = cv2.waitKey(1)
         if keypress & 0xFF == 27:
             self.processing = False
-
-    def play(self) -> None:
-        """
-        :about: Routine run from the VideoRecorder's thread. This thread monitors
-                the passage of time recording the proper number of frames each
-                second.
-        :note:  A log entry is written at the conclusion of recording indicating
-                the speed of the recording.
-        """
-        log.info("video-thread is starting.")
-        start_time = time.monotonic()
-        # fill buffer
-        while self.playing and len(self.video_buffer) < self.buffer_frame_count:
-            if self.new_frame_avail:
-                self.video_buffer.append(self.frame)
-
-        while self.playing:
-            play_at = self.next_frame_at(start_time)
-            while play_at > time.monotonic():
-                time.sleep(self.time_to_sleep)
-
-            self.next_frame(self.card.most_recent_frame())
-
-            if self.new_frame_avail:
-                resized = cv2.resize(self.frame, (self.card.width, self.card.height))
-                cv2.imshow("Display from Video Card", resized)
-
-                self.new_frame_avail = False
-                self.frame_count += 1
-            else:
-                exc = IOError(f"Unable to display at {self.fps} frames/second.")
-                log.exception(exc)
-                raise exc
-
-            keypress = cv2.waitKey(1)
-            if keypress & 0xFF == 27:
-                self.playing = False
-
-        tm = time.monotonic() - start_time
-        calc_fps = round(self.frame_count / tm, 3)
-
-        log.info(f"Displayed {self.frame_count} frames in {round(tm, 1)} seconds. ({calc_fps} frames/second)")
-        cv2.destroyWindow("Display from Video Card")
-
-    """
-    def __enter__(self):
-        " "" __enter__ and __exit__ allow objects of this class to use the with notation."" "
-        self.start_playing()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_traceback):
-        " "" __enter__ and __exit__ allow objects of this class to use the with notation."" "
-        self.stop_playing()
-        return exc_type is None
-    """
