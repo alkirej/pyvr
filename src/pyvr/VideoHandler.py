@@ -36,7 +36,7 @@ class VideoHandler:
 
         # MEMBERS RELATED TO INTER-THREAD COMMUNICATION
         self.new_frame_avail: bool = False
-        self.frame: bytes | None = None
+        self.frame = None
         self.card: VideoCard = card
 
         self.processing: bool = False
@@ -44,21 +44,18 @@ class VideoHandler:
 
         # LOAD CONFIG RELATED TO VIDEO OUTPUT FILE
         _, video_config, _ = load_config()
-        self.fps = int(video_config[VideoCfg.FPS])
         self.codec = cv2.VideoWriter.fourcc(*video_config[VideoCfg.CODEC])
-        self.width = int(video_config[VideoCfg.WIDTH])
-        self.height = int(video_config[VideoCfg.HEIGHT])
         self.pre_start_delay = float(video_config[VideoCfg.PRE_START_DELAY])
 
         log.debug(f"Video startup delay: {self.pre_start_delay} seconds.")
 
         log.debug(f"    - codec = {self.codec}")
-        log.debug(f"    - fps   = {self.fps}")
-        log.debug(f"    - size  = {self.width} x {self.height}")
+        log.debug(f"    - fps   = {self.card.fps}")
+        log.debug(f"    - size  = {self.card.width} x {self.card.height}")
 
         # MEMBERS TO ENSURE VIDEO IS RECORDED AT THE PROPER PACE
         self.frame_count = 0
-        self.time_per_frame = 1 / self.fps
+        self.time_per_frame = 1 / self.card.fps
         self.time_to_sleep = self.time_per_frame / 2
 
     def ready_for_next_frame(self) -> bool:
@@ -90,7 +87,7 @@ class VideoHandler:
         :returns: the results of a simple calculation of the time the
                   next frame should be saved. (in seconds)
         """
-        return start + self.frame_count / self.fps
+        return start + self.frame_count / self.card.fps
 
     def start_processing(self) -> None:
         """

@@ -44,8 +44,8 @@ class VideoRecorder(VideoHandler):
 
         self.writer = cv2.VideoWriter(self.filename,
                                       self.codec,
-                                      self.fps,
-                                      (self.width, self.height)
+                                      self.card.fps,
+                                      (self.card.width, self.card.height)
                                       )
 
     def start_recording(self) -> None:
@@ -84,9 +84,8 @@ class VideoRecorder(VideoHandler):
         if self.new_frame_avail:
             self.writer.write(self.frame)
             self.new_frame_avail = False
-            self.frame_count += 1
         else:
-            exc = IOError(f"Unable to record at {self.fps} frames/second.")
+            exc = IOError(f"Unable to record at {self.card.fps} frames/second.")
             log.exception(exc)
             raise exc
 
@@ -114,7 +113,7 @@ class VideoRecorder(VideoHandler):
                 self.new_frame_avail = False
                 self.frame_count += 1
             else:
-                exc = IOError(f"Unable to record at {self.fps} frames/second.")
+                exc = IOError(f"Unable to record at {self.card.fps} frames/second.")
                 log.exception(exc)
                 raise exc
 

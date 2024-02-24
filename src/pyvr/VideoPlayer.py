@@ -10,10 +10,11 @@
 """
 import cv2
 import logging as log
+import math
 import time
 import threading
 
-from .configuration import load_config, AudioCfg
+from .configuration import load_config, AudioCfg, PreviewCfg
 from .VideoCard import VideoCard
 from .VideoHandler import VideoHandler
 
@@ -38,14 +39,16 @@ class VideoPlayer(VideoHandler):
         self.play_thread = None
 
         # DELAY VIDEO TO SYNC WITH AUDIO
-        audio_config, _, _ = load_config()
+        audio_config, _, preview_config = load_config()
         self.video_buffer: [bytes] = []
-        frame_count: float | int = float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps)
-        if frame_count != int(frame_count):
-            raise ValueError(f"Secs of audio buffer * video frames / second must be an integer. {frame_count} is not.")
-        self.buffer_frame_count = int(frame_count - int(1.6*self.card.fps))
+        if bool(audio_config[AudioCfg.SYNC_PLAYER]):
+            frame_count: int = math.ceil(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps)
+            self.buffer_frame_count = math.ceil(frame_count - int(1.6*self.card.fps))
+        else:
+            self.buffer_frame_count = 1
 
-        self.start_time = None
+        self.height = int(preview_config[PreviewCfg.HEIGHT])
+        self.width = int(preview_config[PreviewCfg.WIDTH])
 
     def start_playing(self) -> None:
         """
@@ -93,11 +96,10 @@ class VideoPlayer(VideoHandler):
 
         if len(self.video_buffer) > 0:
             frame = self.video_buffer.pop(0)
-            resized = cv2.resize(frame, (self.card.width, self.card.height))
+            resized = cv2.resize(frame, (self.width, self.height))
             cv2.imshow("Display from Video Card", resized)
 
             self.new_frame_avail = False
-            self.frame_count += 1
         else:
             exc = IOError(f"Unable to display at {self.fps} frames/second.")
             log.exception(exc)

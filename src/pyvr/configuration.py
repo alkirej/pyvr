@@ -28,6 +28,7 @@ class AudioCfg(str, enum.Enum):
     AUDIO_LIBRARY = "library"
     SAMPLE_RATE = "SampleRate"
     CHANNEL_COUNT = "AudioChannelCount"
+    SYNC_PLAYER = "SyncPlayer"
 
 
 class VideoCfg(str, enum.Enum):
@@ -77,6 +78,11 @@ def load_config() -> (dict, dict):
         audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0.0")
         audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
         audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
+        audio_config.setdefault(AudioCfg.SYNC_PLAYER, "")
+
+        if audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("n") \
+                or audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("f"):
+            audio_config[AudioCfg.SYNC_PLAYER] = ""
 
         if audio_config[AudioCfg.AUDIO_LIBRARY].lower() == "alsaaudio":
             ensure_exists(audio_config[AudioCfg.SAMPLE_RATE])
