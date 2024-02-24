@@ -1,5 +1,5 @@
 """
-.. RAW:: html
+... RAW:: html
 
     <h3 class="cls_header">VideoRecorder</h3>
     <div class="highlight cls_author">
@@ -9,102 +9,105 @@
     </div>
 """
 import cv2
+import logging as log
 import time
 import threading
 
-from .configuration import load_config, VideoCfg
+from .configuration import load_config, AudioCfg
 from .VideoCard import VideoCard
+from .VideoHandler import VideoHandler
 
 
-class VideoPlayer:
+class VideoPlayer(VideoHandler):
     """
     A VideoRecorder object will start a thread that will monitor and record
     video frames supplied by
     :py:class:`VideoCard<pyvr.VideoCard.VideoCard>`
 
-    .. SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
+    ... SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
     """
     def __init__(self, card: VideoCard) -> None:
         """
         :about: VideoRecorder constructor
-        :param filename: filename (currently must end with .mp4) to record video to.
         :param card:  object used to retrieve the video frames from the hardware.
         """
+        VideoHandler.__init__(self, card)
 
         # MEMBERS RELATED TO INTER-THREAD COMMUNICATION
-        self.play_video_thread = None
-        self.new_frame_avail = False
-        self.frame = None
-        self.card = card
+        self.playing: bool = False
+        self.play_thread = None
 
-        # LOAD CONFIG RELATED TO VIDEO OUTPUT FILE
-        _, video_config, _ = load_config()
-        self.fps = int(video_config[VideoCfg.FPS])
-        self.codec = cv2.VideoWriter.fourcc(*video_config[VideoCfg.CODEC])
-        self.width = int(video_config[VideoCfg.WIDTH])
-        self.height = int(video_config[VideoCfg.HEIGHT])
-        self.pre_start_delay = float(video_config[VideoCfg.PRE_START_DELAY])
+        # DELAY VIDEO TO SYNC WITH AUDIO
+        audio_config, _, _ = load_config()
+        self.video_buffer: [bytes] = []
+        frame_count: float | int = float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps)
+        if frame_count != int(frame_count):
+            raise ValueError(f"Secs of audio buffer * video frames / second must be an integer. {frame_count} is not.")
+        self.buffer_frame_count = int(frame_count - int(1.6*self.card.fps))
 
-        log.debug(f"Video startup delay: {self.pre_start_delay} seconds.")
+        self.start_time = None
 
-        log.debug(f"    - codec = {self.codec}")
-        log.debug(f"    - fps   = {self.fps}")
-        log.debug(f"    - size  = {self.width} x {self.height}")
-        self.writer = cv2.VideoWriter(self.filename,
-                                      self.codec,
-                                      self.fps,
-                                      (self.width, self.height)
-                                      )
-
-        # MEMBERS TO ENSURE VIDEO IS RECORDED AT THE PROPER PACE
-        self.start = time.time
-        self.frame_count = 0
-        self.time_per_frame = 1 / self.fps
-        self.time_to_sleep = self.time_per_frame / 2
-
-    def start_recording(self) -> None:
+    def start_playing(self) -> None:
         """
         :about: Start a new thread and use it to record (write to disk) the video
-                frames retreived from the VideoCard
+                frames retrieved from the VideoCard
         """
-        log.info("Starting video recording.")
-        if not self.recording:
-            self.recording = True
-            self.record_thread = threading.Thread(name="video-write-thread", target=self.record)
-            self.record_thread.start()
+        log.info("Starting video.")
+        if not self.playing:
+            self.playing = True
+            self.play_thread = threading.Thread(name="video-write-thread", target=self.play)
+            self.play_thread.start()
 
-    def stop_recording(self) -> None:
+    def stop_playing(self) -> None:
         """
         :about: Complete recording and stop the thread doing it.
         """
-        log.info("Stopping video recording.")
-        if self.recording:
-            self.recording = False
-            self.record_thread.join()
+        log.info("Stopping video.")
+        if self.playing:
+            self.playing = False
+            self.play_thread.join()
 
-    def ready_for_new_frame(self) -> bool:
-        """
-        :about: determine if the recorder is able to store the next video frame.
-        """
-        return not self.new_frame_avail
+    def before_processing(self):
+        log.info("video-thread is starting.")
 
-    def next_frame(self, frame: bytes) -> bool:
-        """
-        :about: get a copy of the next frame to be saved to disk.
-        :note:  The frame is only cached at this point.  It will be saved to disk only
-                when it is time (based on the fps).  This insures the recording is taken
-                at the correct speed.
-        :returns: Return TRUE if the next frame was accepted and FALSE if it is too
-                  soon.
-        """
-        if self.ready_for_new_frame():
-            self.frame = frame
-            self.new_frame_avail = True
-            return True
+        # fill buffer
+        start_time = time.monotonic()
+        while len(self.video_buffer) < self.buffer_frame_count:
+            process_at = self.next_frame_at(start_time)
+            while process_at > time.monotonic():
+                time.sleep(self.time_to_sleep)
 
-        return False
+            self.next_frame(self.card.most_recent_frame())
+            self.video_buffer.append(self.frame)
 
-    def record(self) -> None:
+    def after_processing(self, monotonic_start_time):
+        tm = time.monotonic() - monotonic_start_time
+        calc_fps = round(self.frame_count / tm, 3)
+
+        log.info(f"Displayed {self.frame_count} frames in {round(tm, 1)} seconds. ({calc_fps} frames/second)")
+        cv2.destroyWindow("Display from Video Card")
+
+    def process_single_frame(self):
+        self.next_frame(self.card.most_recent_frame())
+        self.video_buffer.append(self.frame)
+
+        if len(self.video_buffer) > 0:
+            frame = self.video_buffer.pop(0)
+            resized = cv2.resize(frame, (self.card.width, self.card.height))
+            cv2.imshow("Display from Video Card", resized)
+
+            self.new_frame_avail = False
+            self.frame_count += 1
+        else:
+            exc = IOError(f"Unable to display at {self.fps} frames/second.")
+            log.exception(exc)
+            raise exc
+
+        keypress = cv2.waitKey(1)
+        if keypress & 0xFF == 27:
+            self.processing = False
+
+    def play(self) -> None:
         """
         :about: Routine run from the VideoRecorder's thread. This thread monitors
                 the passage of time recording the proper number of frames each
@@ -112,47 +115,49 @@ class VideoPlayer:
         :note:  A log entry is written at the conclusion of recording indicating
                 the speed of the recording.
         """
-        log.info("video-write-thread is starting.")
-        time.sleep(self.pre_start_delay)
-        log.info("video-write-thread finished started.")
+        log.info("video-thread is starting.")
         start_time = time.monotonic()
-        while self.recording:
-            record_at = self.record_next_frame_at(start_time)
-            while record_at > time.monotonic():
+        # fill buffer
+        while self.playing and len(self.video_buffer) < self.buffer_frame_count:
+            if self.new_frame_avail:
+                self.video_buffer.append(self.frame)
+
+        while self.playing:
+            play_at = self.next_frame_at(start_time)
+            while play_at > time.monotonic():
                 time.sleep(self.time_to_sleep)
 
             self.next_frame(self.card.most_recent_frame())
 
             if self.new_frame_avail:
-                self.writer.write(self.frame)
+                resized = cv2.resize(self.frame, (self.card.width, self.card.height))
+                cv2.imshow("Display from Video Card", resized)
+
                 self.new_frame_avail = False
                 self.frame_count += 1
             else:
-                exc = IOError(f"Unable to record at {self.fps} frames/second.")
+                exc = IOError(f"Unable to display at {self.fps} frames/second.")
                 log.exception(exc)
                 raise exc
+
+            keypress = cv2.waitKey(1)
+            if keypress & 0xFF == 27:
+                self.playing = False
 
         tm = time.monotonic() - start_time
         calc_fps = round(self.frame_count / tm, 3)
 
-        log.info(f"Recorded {self.frame_count} frames in {round(tm, 1)} seconds. ({calc_fps} frames/second)")
-        self.writer.release()
+        log.info(f"Displayed {self.frame_count} frames in {round(tm, 1)} seconds. ({calc_fps} frames/second)")
+        cv2.destroyWindow("Display from Video Card")
 
-    def record_next_frame_at(self, start: float) -> float:
-        """
-        :about: Determine the time the next frame should be recorded.
-        :param start: the time the video recording began (in seconds)
-        :returns: the results of a simple calculation of the time the
-                  next frame should be saved. (in seconds)
-        """
-        return start + self.frame_count / self.fps
-
+    """
     def __enter__(self):
-        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-        self.start_recording()
+        " "" __enter__ and __exit__ allow objects of this class to use the with notation."" "
+        self.start_playing()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_traceback):
-        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-        self.stop_recording()
+        " "" __enter__ and __exit__ allow objects of this class to use the with notation."" "
+        self.stop_playing()
         return exc_type is None
+    """

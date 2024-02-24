@@ -1,34 +1,23 @@
-import cv2
+import logging as log
 import time
 
 import pyvr
 
+log.basicConfig(filename="play_video.log",
+                filemode="w",
+                format="%(asctime)s %(filename)15.15s %(funcName)15.15s %(levelname)5.5s %(lineno)4.4s %(message)s",
+                datefmt="%Y%m%d %H%M%S"
+                )
+log.getLogger().setLevel(log.DEBUG)
 
 def main() -> None:
-    _, _, preview_config = pyvr.load_config()
-
-    scale: float = int(preview_config[pyvr.PreviewCfg.PLAYER_SCALE]) / 100.0
-    width: int = int(int(preview_config[pyvr.PreviewCfg.WIDTH]) * scale)
-    height: int = int(int(preview_config[pyvr.PreviewCfg.HEIGHT]) * scale)
-
-    with pyvr.AudioInput() as ai:
-        with pyvr.AudioPlayer(ai):
-            with pyvr.VideoCard() as vc:
-                while True:
-                    # Preview the video being recorded.
-                    f = vc.most_recent_frame()
-                    resized = cv2.resize(f, (width, height))
-                    cv2.imshow("Currently Playing", resized)
-
-                    # Stop/end recording when escape key is pressed.
-                    keypress = cv2.waitKey(1)
-                    if keypress & 0xFF == 27:
-                        break
-
-                    # Save some cpu for other people. Sleep and only show an occasional update.
-                    time.sleep(1.0/60)
-
-    cv2.destroyWindow("Currently Playing")
+    with pyvr.VideoCard() as vc:
+        with pyvr.VideoPlayer(vc) as vp:
+            with pyvr.AudioInput() as ai:
+                with pyvr.AudioPlayer(ai):
+                    while vp.processing:
+                        # Save some cpu for other people. Sleep and only show an occasional update.
+                        time.sleep(0.25)
 
 
 if "__main__" == __name__:

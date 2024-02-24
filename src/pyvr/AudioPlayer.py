@@ -9,7 +9,7 @@
     </div>
 """
 import logging as log
-import simpleaudio as sa
+import pyaudio as pa
 import threading as thr
 import time
 
@@ -18,14 +18,6 @@ from .AudioInput import AudioInput
 
 
 class AudioPlayer(AudioHandler):
-    def __init__(self, audio_input: AudioInput):
-        AudioHandler.__init__(self, audio_input)
-
-        log.info("Setup audio recorder.")
-
-        self.playing: bool = False
-        self.play_thread = None
-
     """
     An AudioRecorder object will start a thread that will monitor and record
     chunks of audio frames supplied by a
@@ -34,6 +26,14 @@ class AudioPlayer(AudioHandler):
 
     ... SEEALSO:: Code snippet from :py:func:`record(...)<pyvr.record>`
     """
+    def __init__(self, audio_input: AudioInput):
+        AudioHandler.__init__(self, audio_input)
+
+        log.info("Setup audio recorder.")
+
+        self.playing: bool = False
+        self.play_thread = None
+
     def start_playing(self) -> None:
         """
         :about: Start a new thread and use it to record (write to disk) the audio
@@ -62,21 +62,24 @@ class AudioPlayer(AudioHandler):
                 it becomes available.
         """
         log.info("audio-play-thread is starting.")
-        time.sleep(self.audio_input.pre_start_delay)
+        audio_interface = pa.PyAudio()
+        audio_stream = audio_interface.open(rate=48000,
+                                            format=pa.paInt16,
+                                            channels=2,
+                                            output=True
+                                            )
+
         log.info("audio-play-thread has started.")
 
         while self.playing:
             if self.audio_input.new_audio_avail():
-                # Preview the audio:
                 audio_buffer = self.audio_input.get_latest_audio()
-                complete_check = sa.play_buffer(audio_buffer,
-                                                self.audio_input.channels,
-                                                2,
-                                                self.audio_input.sample_rate
-                                                )
-                complete_check.wait_done()
+                audio_stream.write(audio_buffer, self.audio_input.buffer_size)
 
-        # wav_file.close()
+            time.sleep(self.audio_input.seconds_of_buffer / 250)
+
+        audio_stream.close()
+        audio_interface.terminate()
 
     def __enter__(self):
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""

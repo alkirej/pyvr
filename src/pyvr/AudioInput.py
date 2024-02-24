@@ -77,23 +77,23 @@ class AudioInput:
 
         if audio_library_name.lower() == "pyaudio":
             log.debug(f"Audio startup delay: {self.pre_start_delay} seconds.")
-            audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
-            if audio_input_device is None:
+            self.audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
+            if self.audio_input_device is None:
                 log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')
                 raise OSError(f'Audio input device {audio_config[AudioCfg.DEVICE_NAME]} not found.')
 
-            log.debug(f'Using audio device: {audio_input_device[SdAttr.NAME]}')
+            log.debug(f'Using audio device: {self.audio_input_device[SdAttr.NAME]}')
 
             # LINUX'S INDEX TO THE MIC WE WILL USE
             self.audio_device_name: str = audio_config[AudioCfg.DEVICE_NAME]
-            self.audio_device_idx: int = audio_input_device[SdAttr.INDEX]
+            self.audio_device_idx: int = self.audio_input_device[SdAttr.INDEX]
 
             # SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.
-            self.sample_rate: int = int(audio_input_device[SdAttr.SAMPLE_RATE])
+            self.sample_rate: int = int(self.audio_input_device[SdAttr.SAMPLE_RATE])
             self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
 
             # NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)
-            self.channels: int = audio_input_device[SdAttr.INPUT_CHANNELS]
+            self.channels: int = self.audio_input_device[SdAttr.INPUT_CHANNELS]
 
         else:
             self.audio_device_name: str = audio_config[AudioCfg.DEVICE_NAME]

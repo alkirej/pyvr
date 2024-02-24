@@ -12,6 +12,7 @@ from .AudioPlayer import AudioPlayer
 from .AudioRecorder import AudioInput, AudioRecorder
 from .configuration import load_config, PreviewCfg
 from .VideoRecorder import VideoCard, VideoRecorder
+from .VideoPlayer import VideoPlayer
 
 # GLOBAL VARIABLES FOR FILE EXTENSION TYPES
 VIDEO_EXT = "mp4"

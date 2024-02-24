@@ -94,7 +94,7 @@ def prompt_to_start() -> None:
 
 def main() -> None:
     play_video_args: [str] = \
-        ["python", "/home/jeff/git/pyvr/src/play_video.py"]
+        ["python", "/home/jeff/git/pyvr/src/play_video.py", "2>/dev/null"]
 
     with proc.Popen(play_video_args, text=True, stderr=proc.PIPE) as process:
         print()
