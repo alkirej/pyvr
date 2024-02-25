@@ -90,16 +90,16 @@ class AudioInput:
 
             # SAMPLE SIZE IS THE # OF AUDIO SAMPLES TAKEN EACH SECOND.
             self.sample_rate: int = int(self.audio_input_device[SdAttr.SAMPLE_RATE])
-            self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
 
             # NUMBER OF AUDIO CHANNELS TO RECORD (1=MONO, 2=STEREO, 6+=SURROUND SOUND)
             self.channels: int = self.audio_input_device[SdAttr.INPUT_CHANNELS]
+            self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
 
         else:
             self.audio_device_name: str = audio_config[AudioCfg.DEVICE_NAME]
             self.sample_rate: int = int(audio_config[AudioCfg.SAMPLE_RATE])
             self.channels: int = int(audio_config[AudioCfg.CHANNEL_COUNT])
-            self.buffer_size = int(self.channels * self.sample_rate * self.seconds_of_buffer)
+            self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
 
         log.debug(f"    - channels    = {self.channels}")
         log.debug(f"    - sample rate = {self.sample_rate}")
@@ -116,30 +116,35 @@ class AudioInput:
         :about: Start monitoring this device and storing the audio data locally.  This will
                 start a thread devoted to the process and then return.
         """
+        time.sleep(1)
         log.info("Starting audio capture.")
         if not self.listening:
             self.listening = True
             self.listen_thread = thr.Thread(name="audio-capture-thread", daemon=True, target=self.thread_target)
             self.listen_thread.start()
-            time.sleep(1)
+            time.sleep(0.1)
 
     def alsaaudio_listen(self) -> None:
         problem_count: int = 0
         log.info("alsaaudio-capture-thread has started.")
 
         # mode can be aa.PCM_NONBLOCK
-        audio_stream = aa.PCM(device=self.audio_device_name, type=aa.PCM_CAPTURE, mode=aa.PCM_NORMAL)
-        audio_stream.setchannels(self.channels)
-        audio_stream.setrate(self.sample_rate)
-        audio_stream.setperiodsize(int(self.sample_rate * self.seconds_of_buffer))
-        audio_stream.setformat(aa.PCM_FORMAT_S16_LE)
+        audio_stream = aa.PCM(device=self.audio_device_name,
+                              type=aa.PCM_CAPTURE,
+                              mode=aa.PCM_NORMAL,
+                              rate=self.sample_rate,
+                              channels=self.channels,
+                              format=aa.PCM_FORMAT_S16_LE,
+                              periodsize=self.buffer_size,
+                              periods=1
+                              )
 
         while self.listening:
             size, new_audio = audio_stream.read()
             if self.new_audio_sample or size < 0:
                 problem_count += 1
-                log.warning(f"Trouble with audio recording. ({problem_count})")
-                print(f"Trouble with audio recording. ({problem_count})")
+                log.warning(f"Trouble with audio capture. ({problem_count})")
+                print(f"Trouble with audio capture. ({problem_count})")
                 if problem_count >= 25:
                     exc = IOError(f"Cannot keep up with audio. ({problem_count})")
                     log.exception(exc)
@@ -170,8 +175,8 @@ class AudioInput:
             new_audio = audio_stream.read(self.buffer_size)
             if self.new_audio_sample:
                 problem_count += 1
-                log.warning(f"Trouble with audio recording. ({problem_count})")
-                print(f"Trouble with audio recording. ({problem_count})")
+                log.warning(f"Trouble with audio processing. ({problem_count})")
+                print(f"Trouble with audio processing. ({problem_count})")
                 if problem_count >= 25:
                     exc = IOError(f"Cannot keep up with audio. ({problem_count})")
                     log.exception(exc)

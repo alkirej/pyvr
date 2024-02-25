@@ -77,7 +77,7 @@ class AudioRecorder(AudioHandler):
         wav_file.setframerate(self.audio_input.sample_rate)
 
         while self.recording:
-            if self.audio_input.new_audio_avail():
+            if self.audio_input.new_audio_sample:
                 current_audio_splice = self.audio_input.get_latest_audio()
                 wav_file.writeframes(current_audio_splice)
             time.sleep(self.time_to_sleep)
