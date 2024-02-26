@@ -126,7 +126,6 @@ class AudioInput:
             time.sleep(0.1)
 
     def alsaaudio_listen(self) -> None:
-        problem_count: int = 0
         log.info("alsaaudio-capture-thread has started.")
 
         # mode can be aa.PCM_NONBLOCK
@@ -136,14 +135,14 @@ class AudioInput:
                               rate=self.sample_rate,
                               channels=self.channels,
                               format=aa.PCM_FORMAT_S16_LE,
-                              periodsize=self.buffer_size * self.channels,
+                              periodsize=self.buffer_size,
                               periods=1
                               )
 
         while self.listening:
             _, new_audio = audio_stream.read()
             while self.new_audio_sample:
-                time.sleep(.1)
+                time.sleep(.01)
 
             self.latest_audio = new_audio
             self.new_audio_sample = True
@@ -155,7 +154,6 @@ class AudioInput:
         :about: Code executed by the audio-capture-thread. Constantly examine the audio
                 from the input device and save it to a file when it is available.
         """
-        problem_count: int = 0
         log.info("pyaudio-capture-thread has started.")
         audio_interface = pa.PyAudio()  # Create an interface to PortAudio
         audio_stream = audio_interface.open(format=pa.paInt16,

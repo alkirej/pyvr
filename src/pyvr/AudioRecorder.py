@@ -15,6 +15,8 @@ import wave
 from .AudioHandler import AudioHandler
 from .AudioInput import AudioInput
 
+ALSA_RECORD_RATE = 48000
+
 
 class AudioRecorder(AudioHandler):
     """
@@ -51,9 +53,13 @@ class AudioRecorder(AudioHandler):
         self.wav_file.setsampwidth(2)
         self.wav_file.setframerate(self.audio_input.sample_rate)
 
-        silence = b'\x00' * int(self.audio_input.sample_rate * self.audio_input.channels * self.audio_input.pre_start_delay)
+        silence = b'\x00' * int(self.audio_input.sample_rate *
+                                self.audio_input.channels *
+                                self.audio_input.pre_start_delay
+                                )
         print(f"Bytes of silence: {len(silence)}")
-        self.wav_file.writeframes(silence)
+        self.wav_file.setnframes(self.audio_input.buffer_size)
+        self.wav_file.writeframesraw(silence)
 
     def after_processing(self) -> None:
         self.wav_file.close()
@@ -61,4 +67,4 @@ class AudioRecorder(AudioHandler):
     def check_buffer(self) -> None:
         if self.audio_input.new_audio_sample:
             audio_buffer = self.audio_input.get_latest_audio()
-            self.wav_file.writeframes(audio_buffer)
+            self.wav_file.writeframesraw(audio_buffer)
