@@ -198,10 +198,10 @@ def record(filename_no_ext: str,
     :param delete_files:
     :Side Effect: Creation of a .mkv file recording the requested audio and video.
 
-    .. note::
+    ... note::
         This routine makes a great example of how to interact with the classes in this package.
 
-            .. code-block:: python
+            ... code-block:: python
                 :caption: Sample Code using the AudioRecorder and VideoRecorder classes.
 
                     with VideoCard() as vc:
@@ -237,11 +237,11 @@ def record(filename_no_ext: str,
 
     # Each with line creates its own thread.
     with pyvr.VideoCard() as vc:
-        with pyvr.VideoRecorder(f"{filename_no_ext}.{pyvr.VIDEO_EXT}", vc):
+        with pyvr.VideoRecorder(f"{filename_no_ext}.{pyvr.VIDEO_EXT}", vc) as vr:
             print(f"Record resolution: ({vc.width}, {vc.height})")
             log.debug(f"Record resolution: ({vc.width}, {vc.height})")
             with pyvr.AudioInput() as ai:
-                with pyvr.AudioRecorder(ai, filename=f"{filename_no_ext}.{pyvr.AUDIO_EXT}"):
+                with pyvr.AudioRecorder(ai, filename=f"{filename_no_ext}.{pyvr.AUDIO_EXT}") as ar:
                     while True:
                         # Preview the video being recorded.
                         f = vc.most_recent_frame()
@@ -264,6 +264,9 @@ def record(filename_no_ext: str,
 
                         # Save some cpu for other people. Sleep and only show an occasional update.
                         time.sleep(interval)
+
+                    ar.processing = False
+                    ai.new_audio_sample = False
 
     print()
     cv2.destroyWindow("Preview")

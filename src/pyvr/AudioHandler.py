@@ -12,7 +12,6 @@ from abc import abstractmethod
 
 import logging as log
 import threading as thr
-import time
 
 from .AudioInput import AudioInput
 
@@ -64,8 +63,6 @@ class AudioHandler:
 
     def process(self):
         self.before_processing()
-
-        # time.sleep(self.pre_start_delay)
 
         while self.processing:
             self.check_buffer()
