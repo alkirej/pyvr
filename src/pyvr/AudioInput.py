@@ -100,7 +100,6 @@ class AudioInput:
             self.sample_rate: int = int(audio_config[AudioCfg.SAMPLE_RATE])
             self.channels: int = int(audio_config[AudioCfg.CHANNEL_COUNT])
             self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
-            print(f"buffer: {self.buffer_size}, sample rate: {self.sample_rate}")
 
         log.debug(f"    - channels    = {self.channels}")
         log.debug(f"    - sample rate = {self.sample_rate}")

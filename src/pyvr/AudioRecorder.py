@@ -57,7 +57,6 @@ class AudioRecorder(AudioHandler):
                                 self.audio_input.channels *
                                 self.audio_input.pre_start_delay
                                 )
-        print(f"Bytes of silence: {len(silence)}")
         self.wav_file.setnframes(self.audio_input.buffer_size)
         self.wav_file.writeframesraw(silence)
 
