@@ -42,33 +42,13 @@ class VideoPlayer(VideoHandler):
         audio_config, _, preview_config = load_config()
         self.video_buffer: [bytes] = []
         if bool(audio_config[AudioCfg.SYNC_PLAYER]):
-            frame_count: int = math.ceil(float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps))
-            self.buffer_frame_count = math.ceil(frame_count - int(1.6*self.card.fps))
+            self.buffer_frame_count: int = math.ceil(float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps))
+            print(f"SYNC VIDEO. DELAY FOR {self.buffer_frame_count} frames.")
         else:
             self.buffer_frame_count = 1
 
         self.height = int(preview_config[PreviewCfg.HEIGHT])
         self.width = int(preview_config[PreviewCfg.WIDTH])
-
-    def start_playing(self) -> None:
-        """
-        :about: Start a new thread and use it to record (write to disk) the video
-                frames retrieved from the VideoCard
-        """
-        log.info("Starting video.")
-        if not self.playing:
-            self.playing = True
-            self.play_thread = threading.Thread(name="video-write-thread", target=self.play)
-            self.play_thread.start()
-
-    def stop_playing(self) -> None:
-        """
-        :about: Complete recording and stop the thread doing it.
-        """
-        log.info("Stopping video.")
-        if self.playing:
-            self.playing = False
-            self.play_thread.join()
 
     def before_processing(self):
         log.info("video-thread is starting.")

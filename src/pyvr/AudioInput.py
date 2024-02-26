@@ -100,6 +100,7 @@ class AudioInput:
             self.sample_rate: int = int(audio_config[AudioCfg.SAMPLE_RATE])
             self.channels: int = int(audio_config[AudioCfg.CHANNEL_COUNT])
             self.buffer_size: int = int(self.sample_rate * self.seconds_of_buffer)
+            print(f"buffer: {self.buffer_size}, sample rate: {self.sample_rate}")
 
         log.debug(f"    - channels    = {self.channels}")
         log.debug(f"    - sample rate = {self.sample_rate}")
@@ -135,20 +136,14 @@ class AudioInput:
                               rate=self.sample_rate,
                               channels=self.channels,
                               format=aa.PCM_FORMAT_S16_LE,
-                              periodsize=self.buffer_size,
+                              periodsize=self.buffer_size * self.channels,
                               periods=1
                               )
 
         while self.listening:
-            size, new_audio = audio_stream.read()
-            if self.new_audio_sample or size < 0:
-                problem_count += 1
-                log.warning(f"Trouble with audio capture. ({problem_count})")
-                print(f"Trouble with audio capture. ({problem_count})")
-                if problem_count >= 25:
-                    exc = IOError(f"Cannot keep up with audio. ({problem_count})")
-                    log.exception(exc)
-                    raise exc
+            _, new_audio = audio_stream.read()
+            while self.new_audio_sample:
+                time.sleep(.1)
 
             self.latest_audio = new_audio
             self.new_audio_sample = True
@@ -172,15 +167,12 @@ class AudioInput:
                                             )
 
         while self.listening:
+            wait_count = 0
             new_audio = audio_stream.read(self.buffer_size)
-            if self.new_audio_sample:
-                problem_count += 1
-                log.warning(f"Trouble with audio processing. ({problem_count})")
-                print(f"Trouble with audio processing. ({problem_count})")
-                if problem_count >= 25:
-                    exc = IOError(f"Cannot keep up with audio. ({problem_count})")
-                    log.exception(exc)
-                    raise exc
+            while self.new_audio_sample:
+                wait_count += 1
+                print(f"Wait count: {wait_count}")
+                time.sleep(.01)
 
             self.latest_audio = new_audio
             self.new_audio_sample = True
@@ -216,11 +208,9 @@ class AudioInput:
             self.listen_thread.join()
 
     def __enter__(self) -> Self:
-        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.start_listening()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_traceback) -> bool:
-        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.stop_listening()
         return exc_type is None

@@ -94,9 +94,12 @@ def prompt_to_start() -> None:
 
 def main() -> None:
     play_video_args: [str] = \
-        ["python", "/home/jeff/git/pyvr/src/play_video.py", "2>/dev/null"]
+        ["python", "/home/jeff/git/pyvr/src/play_video.py"]
 
-    with proc.Popen(play_video_args, text=True, stderr=proc.PIPE) as process:
+    ignore_output = open(os.devnull, 'w')
+
+    # with proc.Popen(play_video_args, text=True, stderr=proc.PIPE) as process:
+    with proc.Popen(play_video_args, text=True, stderr=ignore_output) as process:
         print()
         print()
 
@@ -105,6 +108,7 @@ def main() -> None:
         prompt_to_start()
         process.terminate()
 
+    ignore_output.close()
     full_path = os.path.join(dir_name, file_name)
 
     print(f"Record to:  {full_path}.mkv")

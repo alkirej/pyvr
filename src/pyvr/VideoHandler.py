@@ -134,6 +134,8 @@ class VideoHandler:
     def process(self):
         self.before_processing()
 
+        time.sleep(self.pre_start_delay)
+
         start_time = time.monotonic()
         while self.processing:
             process_at = self.next_frame_at(start_time)

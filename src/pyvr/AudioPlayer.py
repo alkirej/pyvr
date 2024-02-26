@@ -8,12 +8,10 @@
         Date:   October 2023</pre>
     </div>
 """
+from abc import abstractmethod
 import alsaaudio as aa
 import logging as log
 import pyaudio as pa
-import sounddevice as sd
-import threading as thr
-import time
 
 from .AudioHandler import AudioHandler
 from .AudioInput import AudioInput
@@ -43,83 +41,66 @@ class AudioPlayer(AudioHandler):
         assert (audio_library_name.lower() == "pyaudio" or audio_library_name.lower() == "alsaaudio")
         self.audio_lib: str = audio_library_name.lower()
         if self.audio_lib == "pyaudio":
-            self.thread_target = self.pyaudio_play
+            self.pyaudio = True
+            self.alsaaudio = False
         else:
-            self.thread_target = self.alsaaudio_play
+            self.pyaudio = False
+            self.alsaaudio = True
 
-    def start_playing(self) -> None:
-        """
-        :about: Start a new thread and use it to record (write to disk) the audio
-                data retrieved from the AudioInput object.
-        """
-        log.info("Start playing audio.")
-        # capture (record) the input from the audio input device and play on default speakers.
-        if not self.playing:
-            self.playing = True
-            self.play_thread = thr.Thread(name="audio-write-thread", target=self.thread_target)
-            self.play_thread.start()
+        self.audio_stream = None
+        self.audio_interface = None
 
-    def stop_playing(self) -> None:
-        """
-        :about: Complete recording and stop the thread doing it.
-        """
-        log.info("Stop playing audio.")
-        if self.playing:
-            self.playing = False
-            self.play_thread.join()
-
-    def alsaaudio_play(self) -> None:
+    def alsaaudio_start(self) -> None:
         log.info("alsaaudio-play-thread is starting.")
-        audio_stream = aa.PCM(type=aa.PCM_PLAYBACK,
-                              mode=aa.PCM_NORMAL,
-                              rate=self.audio_input.sample_rate,
-                              channels=self.audio_input.channels,
-                              format=aa.PCM_FORMAT_S16_LE,
-                              # periodsize=self.audio_input.buffer_size,
-                              # periods=1
-                              )
+        self.audio_stream = aa.PCM(device="default",
+                                   type=aa.PCM_PLAYBACK,
+                                   mode=aa.PCM_NORMAL,
+                                   rate=self.audio_input.sample_rate,
+                                   channels=self.audio_input.channels,
+                                   format=aa.PCM_FORMAT_S16_LE,
+                                   periodsize=1024,
+                                   periods=1
+                                   )
+        print(self.audio_stream.info())  # !!!
         log.info("alsaaudio-play-thread has started.")
 
-        while self.playing:
-            if self.audio_input.new_audio_sample:
-                audio_buffer = self.audio_input.get_latest_audio()
-                audio_stream.write(audio_buffer)
-            time.sleep(self.audio_input.seconds_of_buffer / 250)
+    def alsaaudio_stop(self) -> None:
+        self.audio_stream.close()
 
-    def pyaudio_play(self) -> None:
+    def pyaudio_start(self) -> None:
         """
         :about: Routine run from the AudioRecorder's thread. This thread monitors
                 the status of the AudioInput device and saves the audio data as
                 it becomes available.
         """
         log.info("pyaudio-play-thread is starting.")
-        audio_interface = pa.PyAudio()
-        audio_stream = audio_interface.open(rate=48000,
-                                            format=pa.paInt16,
-                                            channels=2,
-                                            output=True
-                                            )
-
+        self.audio_interface = pa.PyAudio()
+        self.audio_stream = self.audio_interface.open(rate=self.audio_input.sample_rate,
+                                                      format=pa.paInt16,
+                                                      channels=2,
+                                                      output=True
+                                                      )
         log.info("pyaudio-play-thread has started.")
 
-        while self.playing:
-            if self.audio_input.new_audio_sample:
-                audio_buffer = self.audio_input.get_latest_audio()
-                sd.playrec(data=audio_buffer,channels=2,samplerate=48000)
-                # sd.play(audio_buffer, 48000)
-                sd.wait()
-                # audio_stream.write(audio_buffer)
-            # time.sleep(self.audio_input.seconds_of_buffer / 250)
+    def pyaudio_stop(self) -> None:
+        self.audio_stream.close()
+        self.audio_interface.terminate()
 
-        audio_stream.close()
-        audio_interface.terminate()
+    @abstractmethod
+    def before_processing(self):
+        if self.pyaudio:
+            self.pyaudio_start()
+        else:
+            self.alsaaudio_start()
 
-    def __enter__(self):
-        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-        self.start_playing()
-        return self
+    @abstractmethod
+    def after_processing(self):
+        if self.pyaudio:
+            self.pyaudio_stop()
+        else:
+            self.alsaaudio_stop()
 
-    def __exit__(self, exc_type, exc_val, exc_traceback):
-        """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-        self.stop_playing()
-        return exc_type is None
+    def check_buffer(self) -> None:
+        if self.audio_input.new_audio_sample:
+            audio_buffer = self.audio_input.get_latest_audio()
+            self.audio_stream.write(audio_buffer)

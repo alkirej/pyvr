@@ -93,3 +93,9 @@ class AudioRecorder(AudioHandler):
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""
         self.stop_recording()
         return exc_type is None
+
+
+    def check_buffer(self) -> None:
+        if self.audio_input.new_audio_sample:
+            audio_buffer = self.audio_input.get_latest_audio()
+            self.wav_file.writeframes(audio_buffer)

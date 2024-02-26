@@ -79,13 +79,13 @@ def load_config() -> (dict, dict):
         audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
         audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
         audio_config.setdefault(AudioCfg.SYNC_PLAYER, "")
+        audio_config.setdefault(AudioCfg.SAMPLE_RATE, "0")
 
         if audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("n") \
                 or audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("f"):
             audio_config[AudioCfg.SYNC_PLAYER] = ""
 
         if audio_config[AudioCfg.AUDIO_LIBRARY].lower() == "alsaaudio":
-            ensure_exists(audio_config[AudioCfg.SAMPLE_RATE])
             ensure_exists(audio_config[AudioCfg.CHANNEL_COUNT])
 
         log.debug("Load [VIDEO] section from pyvr.ini")

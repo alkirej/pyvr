@@ -10,6 +10,10 @@
 """
 from abc import abstractmethod
 
+import logging as log
+import threading as thr
+import time
+
 from .AudioInput import AudioInput
 
 
@@ -30,15 +34,59 @@ class AudioHandler:
         # MEMBERS USED TO INTERACT WITH THE AUDIO HARDWARE
         self.audio_input = audio_input
 
-        #  WAKE UP 5 TIMES BETWEEN EACH DISK WRITE
-        self.time_to_sleep = (self.audio_input.buffer_size/self.audio_input.sample_rate) / 5
+        self.time_to_sleep = (self.audio_input.buffer_size/self.audio_input.sample_rate) / 250
+        self.processing = False
+        self.process_thread = None
+
+    def start_processing(self) -> None:
+        """
+        :about: Start a new thread and use it to record (write to disk) the audio
+                data retrieved from the AudioInput object.
+        """
+        log.info("Start processing audio.")
+        # capture (record) the input from the audio input device and play on default speakers.
+        if not self.processing:
+            self.processing = True
+            self.process_thread = thr.Thread(name="audio-process-thread", target=self.process)
+            self.process_thread.start()
 
     @abstractmethod
+    def before_processing(self):
+        pass
+
+    @abstractmethod
+    def after_processing(self):
+        pass
+
+    @abstractmethod
+    def check_buffer(self):
+        pass
+
+    def process(self):
+        self.before_processing()
+
+        # time.sleep(self.pre_start_delay)
+
+        while self.processing:
+            self.check_buffer()
+
+        self.after_processing()
+
+    def stop_processing(self) -> None:
+        """
+        :about: Complete recording and stop the thread doing it.
+        """
+        log.info("Stop processing audio.")
+        if self.processing:
+            self.processing = False
+            self.process_thread.join()
+
     def __enter__(self):
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-        pass
+        self.start_processing()
+        return self
 
-    @abstractmethod
     def __exit__(self, exc_type, exc_val, exc_traceback):
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""
-        pass
+        self.stop_processing()
+        return exc_type is None
