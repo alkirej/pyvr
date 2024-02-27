@@ -55,13 +55,12 @@ class AudioPlayer(AudioHandler):
         self.audio_stream = aa.PCM(device="default",
                                    type=aa.PCM_PLAYBACK,
                                    mode=aa.PCM_NORMAL,
-                                   rate=self.audio_input.sample_rate,
+                                   rate=44100,  # Any other value causes error.
                                    channels=self.audio_input.channels,
                                    format=aa.PCM_FORMAT_S16_LE,
-                                   periodsize=1024,
+                                   periodsize=self.audio_input.buffer_size,
                                    periods=1
                                    )
-        print(self.audio_stream.info())  # !!!
         log.info("alsaaudio-play-thread has started.")
 
     def alsaaudio_stop(self) -> None:
@@ -88,17 +87,11 @@ class AudioPlayer(AudioHandler):
 
     @abstractmethod
     def before_processing(self):
-        if self.pyaudio:
-            self.pyaudio_start()
-        else:
-            self.alsaaudio_start()
+        self.pyaudio_start()
 
     @abstractmethod
     def after_processing(self):
-        if self.pyaudio:
-            self.pyaudio_stop()
-        else:
-            self.alsaaudio_stop()
+        self.pyaudio_stop()
 
     def check_buffer(self) -> None:
         if self.audio_input.new_audio_sample:

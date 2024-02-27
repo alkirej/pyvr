@@ -132,9 +132,9 @@ class VideoHandler:
         pass
 
     def process(self):
-        self.before_processing()
-
         time.sleep(self.pre_start_delay)
+
+        self.before_processing()
 
         start_time = time.monotonic()
         while self.processing:

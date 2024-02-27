@@ -23,12 +23,12 @@ class AudioCfg(str, enum.Enum):
     and their corresponding name in the ini file.
     """
     DEVICE_NAME = "DeviceName"
-    PRE_START_DELAY = "PreStartDelay"
     SECS_OF_BUFFER = "SecsOfBuffer"
     AUDIO_LIBRARY = "library"
     SAMPLE_RATE = "SampleRate"
     CHANNEL_COUNT = "AudioChannelCount"
     SYNC_PLAYER = "SyncPlayer"
+    PRE_START_DELAY = "PreStartDelay"
 
 
 class VideoCfg(str, enum.Enum):
@@ -75,11 +75,11 @@ def load_config() -> (dict, dict):
         # LOAD EACH SECTION AND ENSURE REQUIRED VALUES WERE PROVIDED
         audio_config = config["AUDIO"]
         ensure_exists(audio_config[AudioCfg.DEVICE_NAME])
-        audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0.0")
         audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
         audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
         audio_config.setdefault(AudioCfg.SYNC_PLAYER, "")
         audio_config.setdefault(AudioCfg.SAMPLE_RATE, "0")
+        audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0")
 
         if audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("n") \
                 or audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("f"):

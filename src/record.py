@@ -256,20 +256,20 @@ def record(filename_no_ext: str,
                         # Stop recording if the end recording time is reached.
                         if stop_recording_at is not None:
                             current_time = dt.datetime.now()
-                            if current_time > stop_recording_at:
+                            seconds_left: int = (stop_recording_at - current_time).seconds
+                            display_time_remaining(seconds_left)
+
+                            if seconds_left < 1:
                                 break
-                            else:
-                                seconds_left: int = (stop_recording_at - current_time).seconds
-                                display_time_remaining(seconds_left)
 
                         # Save some cpu for other people. Sleep and only show an occasional update.
                         time.sleep(interval)
 
-                    ar.processing = False
-                    ai.new_audio_sample = False
+                    ar.processing = ai.new_audio_sample = vr.processing = vc.viewing = False
 
     print()
     cv2.destroyWindow("Preview")
+    time.sleep(0.5)
     log.info("Combine and compress recording information.")
     print("Processing final results.  Please be patient ...")
     pyvr.combine_video_and_audio(f"{filename_no_ext}.{pyvr.VIDEO_EXT}",

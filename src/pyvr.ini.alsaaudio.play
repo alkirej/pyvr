@@ -1,16 +1,18 @@
 # ==================
-# = PyAudio Record =
+# = AlsaAudio Play =
 # ==================
 
 [AUDIO]
 SecsOfBuffer=1
 SyncPlayer=Yes
-Library=PyAudio
-DeviceName=Pyle
+Library=alsaaudio
+DeviceName=hw:CARD=PLINK5,DEV=0
+SampleRate=48000
+AudioChannelCount=2
 
 
 [VIDEO]
-PreStartDelay=0.05
+PreStartDelay=0.25
 Device=/dev/video0
 Width=1280
 Height=720

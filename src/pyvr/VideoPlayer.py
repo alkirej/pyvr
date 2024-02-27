@@ -12,7 +12,6 @@ import cv2
 import logging as log
 import math
 import time
-import threading
 
 from .configuration import load_config, AudioCfg, PreviewCfg
 from .VideoCard import VideoCard

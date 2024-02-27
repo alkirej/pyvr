@@ -72,11 +72,9 @@ class AudioInput:
         else:
             self.thread_target = self.alsaaudio_listen
 
-        self.pre_start_delay = float(audio_config[AudioCfg.PRE_START_DELAY])
         self.seconds_of_buffer: float = float(audio_config[AudioCfg.SECS_OF_BUFFER])
-
+        self.pre_start_delay: float = float(audio_config[AudioCfg.PRE_START_DELAY])
         if audio_library_name.lower() == "pyaudio":
-            log.debug(f"Audio startup delay: {self.pre_start_delay} seconds.")
             self.audio_input_device = lookup_device(audio_config[AudioCfg.DEVICE_NAME])
             if self.audio_input_device is None:
                 log.critical(f'Unable to find device: {audio_config[AudioCfg.DEVICE_NAME]}')
@@ -116,7 +114,6 @@ class AudioInput:
         :about: Start monitoring this device and storing the audio data locally.  This will
                 start a thread devoted to the process and then return.
         """
-        time.sleep(1)
         log.info("Starting audio capture.")
         if not self.listening:
             self.listening = True
@@ -202,6 +199,7 @@ class AudioInput:
         log.info("Ending audio capture.")
         if self.listening:
             self.listening = False
+            self.new_audio_sample = False
             self.listen_thread.join()
 
     def __enter__(self) -> Self:

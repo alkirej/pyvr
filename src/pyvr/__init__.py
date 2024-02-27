@@ -60,14 +60,14 @@ def record(filename_no_ext: str) -> None:
 
     # Each with line creates its own thread.
     with VideoCard() as vc:
-        with VideoRecorder(f"{filename_no_ext}.{VIDEO_EXT}", vc):
+        with VideoRecorder(f"{filename_no_ext}.{VIDEO_EXT}", vc) as vr:
             with AudioInput() as ai:
-                with AudioRecorder(ai, filename=f"{filename_no_ext}.{AUDIO_EXT}"):
+                with AudioRecorder(ai, filename=f"{filename_no_ext}.{AUDIO_EXT}") as ar:
                     while True:
                         # Preview the video being recorded.
                         f = vc.most_recent_frame()
                         resized = cv2.resize(f, (width, height))
-                        cv2.imshow("Preview", resized)
+                        cv2.imshow("Preview of Recording", resized)
 
                         # Stop/end recording when escape key is pressed.
                         keypress = cv2.waitKey(1)
@@ -77,7 +77,9 @@ def record(filename_no_ext: str) -> None:
                         # Save some cpu for other people. Sleep and only show an occasional update.
                         time.sleep(interval)
 
-    cv2.destroyWindow("Preview")
+                    ar.processing = ai.new_audio_sample = vr.processing = vc.viewing = False
+
+    cv2.destroyWindow("Preview of Recording")
     log.info("Combine and compress recording information.")
     print("Processing final results.  Please be patient ...")
     combine_video_and_audio(f"{filename_no_ext}.{VIDEO_EXT}",

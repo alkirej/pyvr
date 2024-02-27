@@ -9,13 +9,10 @@
     </div>
 """
 import logging as log
-import time
 import wave
 
 from .AudioHandler import AudioHandler
 from .AudioInput import AudioInput
-
-ALSA_RECORD_RATE = 48000
 
 
 class AudioRecorder(AudioHandler):
@@ -44,16 +41,14 @@ class AudioRecorder(AudioHandler):
         log.info(f"    - Audio output sent to {self.filename}")
 
     def before_processing(self) -> None:
-        log.info(f"audio-write-thread is starting. delay={self.audio_input.pre_start_delay}")
-        time.sleep(self.audio_input.pre_start_delay)
-        log.info("audio-write-thread has started.")
+        log.info(f"audio-write-thread is starting")
 
         self.wav_file = wave.open(self.filename, 'wb')
         self.wav_file.setnchannels(self.audio_input.channels)
         self.wav_file.setsampwidth(2)
         self.wav_file.setframerate(self.audio_input.sample_rate)
 
-        silence = b'\x00' * int(self.audio_input.sample_rate *
+        silence = b'\x00' * int(self.audio_input.sample_rate * 2 *
                                 self.audio_input.channels *
                                 self.audio_input.pre_start_delay
                                 )

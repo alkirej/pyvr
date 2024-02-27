@@ -1,0 +1,42 @@
+[AUDIO]
+SecsOfBuffer=1
+SyncPlayer=Yes
+
+# =============================
+# PyAudio 
+# =============================
+# Library=PyAudio
+# DeviceName=Pyle
+# PreStartDelay=0 
+
+# =============================
+# AlsaAudio 
+# =============================
+Library=alsaaudio
+DeviceName=hw:CARD=PLINK5,DEV=0
+SampleRate=48000
+AudioChannelCount=2
+# PLAY VIDEO
+# PreStartDelay=2
+# RECORD VIDEO
+PreStartDelay=0
+
+
+[VIDEO]
+# PYAUDIO
+# PreStartDelay=0.05
+# ALSAAUDIO PLAY VIDEO
+# PreStartDelay=0.05
+# ALSAAUDIO RECORD VIDEO
+PreStartDelay=0.25
+Device=/dev/video0
+Width=1280
+Height=720
+
+FPS=30
+Codec=mp4v
+
+[PREVIEW]
+Width=1280
+Height=720
+IntervalInSecs=0.1

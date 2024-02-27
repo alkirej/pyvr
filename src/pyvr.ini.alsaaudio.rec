@@ -1,0 +1,27 @@
+# ====================
+# = AlsaAudio Record =
+# ====================
+
+[AUDIO]
+SyncPlayer=Yes
+SecsOfBuffer=1
+Library=alsaaudio
+DeviceName=hw:CARD=PLINK5,DEV=0
+SampleRate=48000
+AudioChannelCount=2
+
+
+[VIDEO]
+PreStartDelay=0.05
+Device=/dev/video0
+Width=1280
+Height=720
+FPS=30
+Codec=mp4v
+
+
+[PREVIEW]
+Width=1280
+Height=720
+IntervalInSecs=0.1
+
