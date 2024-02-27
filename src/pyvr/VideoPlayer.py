@@ -41,7 +41,9 @@ class VideoPlayer(VideoHandler):
         audio_config, _, preview_config = load_config()
         self.video_buffer: [bytes] = []
         if bool(audio_config[AudioCfg.SYNC_PLAYER]):
-            self.buffer_frame_count: int = math.ceil(float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps))
+            startup_duration: float = float(audio_config[AudioCfg.SECS_OF_BUFFER]) * int(self.card.fps)
+            startup_duration += float(self.pre_start_delay)
+            self.buffer_frame_count: int = math.ceil(startup_duration)
             print(f"SYNC VIDEO. DELAY FOR {self.buffer_frame_count} frames.")
         else:
             self.buffer_frame_count = 1
