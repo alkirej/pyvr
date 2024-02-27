@@ -76,9 +76,8 @@ class AudioHandler:
         :about: Complete recording and stop the thread doing it.
         """
         log.info("Stop processing audio.")
-        if self.processing:
-            self.processing = False
-            self.process_thread.join()
+        self.processing = False
+        self.process_thread.join()
 
     def __enter__(self):
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""

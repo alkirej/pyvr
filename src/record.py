@@ -239,14 +239,13 @@ def record(filename_no_ext: str,
     with pyvr.VideoCard() as vc:
         with pyvr.VideoRecorder(f"{filename_no_ext}.{pyvr.VIDEO_EXT}", vc) as vr:
             print(f"Record resolution: ({vc.width}, {vc.height})")
-            log.debug(f"Record resolution: ({vc.width}, {vc.height})")
             with pyvr.AudioInput() as ai:
                 with pyvr.AudioRecorder(ai, filename=f"{filename_no_ext}.{pyvr.AUDIO_EXT}") as ar:
                     while True:
                         # Preview the video being recorded.
                         f = vc.most_recent_frame()
                         resized = cv2.resize(f, (width, height))
-                        cv2.imshow("Preview", resized)
+                        cv2.imshow("Preview Recording", resized)
 
                         # Stop/end recording when escape key is pressed.
                         keypress = cv2.waitKey(1)
@@ -259,16 +258,19 @@ def record(filename_no_ext: str,
                             seconds_left: int = (stop_recording_at - current_time).seconds
                             display_time_remaining(seconds_left)
 
-                            if seconds_left < 1:
+                            if seconds_left < 1 or current_time > stop_recording_at:
                                 break
 
                         # Save some cpu for other people. Sleep and only show an occasional update.
                         time.sleep(interval)
 
-                    ar.processing = ai.new_audio_sample = vr.processing = vc.viewing = False
+                    ar.processing = False
+                ai.new_audio_sample = False
+            vr.processing = False
+        vc.viewing = False
 
     print()
-    cv2.destroyWindow("Preview")
+    cv2.destroyWindow("Preview Recording")
     time.sleep(0.5)
     log.info("Combine and compress recording information.")
     print("Processing final results.  Please be patient ...")
@@ -386,7 +388,6 @@ def main() -> None:
                compute_end_time(None, duration, None),
                False
                )
-        # DELETE EXTRA FILES NOW?
 
     else:
         record_at: dt.datetime = compute_start_time(cl_opts[CommandLineOpts.START_TIME])

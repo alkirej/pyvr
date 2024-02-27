@@ -40,7 +40,6 @@ def lookup_device(name: str) -> dict | None:
     """
     try:
         return_val = sd.query_devices(device=name)
-        log.debug(str(return_val))
         return return_val
 
     except ValueError as ve:
@@ -197,10 +196,9 @@ class AudioInput:
                 corresponding thread.
         """
         log.info("Ending audio capture.")
-        if self.listening:
-            self.listening = False
-            self.new_audio_sample = False
-            self.listen_thread.join()
+        self.listening = False
+        self.new_audio_sample = False
+        self.listen_thread.join()
 
     def __enter__(self) -> Self:
         self.start_listening()

@@ -106,10 +106,9 @@ class VideoCard:
                 corresponding thread..
         """
         log.info("Ending video capture.")
-        if self.viewing:
-            self.viewing = False
-            self.grab_vid_thread.join()
-            self.vid_source.release()
+        self.viewing = False
+        self.vid_source.release()
+        self.grab_vid_thread.join()
 
     def __enter__(self) -> Self:
         """ __enter__ and __exit__ allow objects of this class to use the with notation."""
