@@ -32,7 +32,7 @@ def accept_int(prompt: str) -> int:
     str_val: str = input(f"    {prompt}: ")
     int_val: int = int(str_val)
 
-    if int_val < 0 or int_val > 99:
+    if int_val < 0 or int_val > 9999:
         print("VALUE OUT OF RANGE!")
         sys.exit(1)
 
