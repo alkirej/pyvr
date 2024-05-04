@@ -291,7 +291,7 @@ def prompt_for_duration() -> str:
     print()
     print("RECORD DURATION")
     int_hr = int(input("    Hours: "))
-    if int_hr < 0 or int_hr > 4:
+    if int_hr < 0 or int_hr > 6:
         print("INVALID RECORD DURATION (HOURS)")
         sys.exit(1)
     hrs = str(int_hr)
