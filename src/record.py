@@ -315,7 +315,7 @@ def prompt_for_duration() -> str:
     return f"{hrs}:{mins}:{secs}"
 
 
-def prompt_for_filename() -> str:
+def prompt_for_filename(basketball: bool = True) -> str:
     print("Game Date:")
 
     year = input("   Year: ")
@@ -355,12 +355,16 @@ def prompt_for_filename() -> str:
     city = city.strip()
     city = city.replace(" ", "")
 
-    if int_month <= 7:
-        prefix = "1"
-        season = str(int_year)
+    if basketball:
+        if int_month <= 7:
+            prefix = "1"
+            season = str(int_year)
+        else:
+            prefix = ""
+            season = str(int_year+1)
     else:
         prefix = ""
-        season = str(int_year+1)
+        season = str(int_year)
 
     print()
     notes = input("   Note: ")

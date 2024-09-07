@@ -16,7 +16,7 @@ def main() -> None:
     with proc.Popen(play_video_args, text=True, stderr=proc.PIPE) as process:
         print()
         print()
-        file_name = prompt_for_filename(basketball=True)
+        file_name = prompt_for_filename(basketball=False)
         duration = prompt_for_duration()
         prompt_to_start()
         process.terminate()
