@@ -5,7 +5,6 @@ import enum
 import logging as log
 import optparse as cl  # cl = command line.
 import os
-import sys
 import time
 import typing as typ
 
@@ -288,29 +287,60 @@ def record(filename_no_ext: str,
 
 
 def prompt_for_duration() -> str:
+    move_on: bool = False
+    int_hr: int = -1
+    int_min: int = -1
+    int_sec: int = -1
+
+    hrs: str = ""
+    mins: str = ""
+    secs: str = ""
+
     print()
     print("RECORD DURATION")
-    int_hr = int(input("    Hours: "))
-    if int_hr < 0 or int_hr > 6:
-        print("INVALID RECORD DURATION (HOURS)")
-        sys.exit(1)
-    hrs = str(int_hr)
+    while not move_on:
+        hrs = input("    Hours: ")
+        try:
+            int_hr = int(hrs)
+        except ValueError:
+            pass
 
-    int_min = int(input("    Minutes (0-59): "))
-    if int_min < 0 or int_min > 59:
-        print("INVALID RECORD DURATION (MINUTES)")
-        sys.exit(1)
-    mins = str(int_min)
-    if len(mins) == 1:
-        mins = f"0{int_min}"
+        if int_hr < 0 or int_hr > 6:
+            print("INVALID RECORD DURATION (HOURS)\n")
+        else:
+            move_on = True
 
-    int_secs = int(input("    Seconds (0-59): "))
-    if int_secs < 0 or int_secs > 59:
-        print("INVALID RECORD DURATION (SECONDS)")
-        sys.exit(1)
-    secs = str(int_secs)
-    if len(secs) == 1:
-        secs = f"0{int_secs}"
+    move_on = False
+    while not move_on:
+        mins = input("    Minutes (0-59): ")
+        try:
+            int_min = int(mins)
+        except ValueError:
+            pass
+
+        if len(mins) == 1:
+            mins = f"0{int_min}"
+
+        if int_min < 0 or int_min > 59:
+            print("INVALID RECORD DURATION (MINUTES)\n")
+        else:
+            move_on = True
+
+    move_on = False
+    while not move_on:
+        secs = input("    Seconds (0-59): ")
+        try:
+            int_sec = int(secs)
+        except ValueError:
+            pass
+
+        if len(secs) == 1:
+            secs = f"0{int_sec}"
+
+        if int_sec < 0 or int_sec > 59:
+            print("INVALID RECORD DURATION (SECONDS)\n")
+        else:
+            move_on = True
 
     return f"{hrs}:{mins}:{secs}"
 
@@ -318,37 +348,74 @@ def prompt_for_duration() -> str:
 def prompt_for_filename(basketball: bool = True) -> str:
     print("Game Date:")
 
-    year = input("   Year: ")
-    int_year = int(year)
-    if int_year < 1950 or int_year > 2100:
-        print("INVALID YEAR.")
-        sys.exit(1)
+    int_day: int = 0
+    int_month: int = 0
+    int_year: int = 0
 
-    int_month = int(input("   Month (1-12): "))
-    month = str(int_month)
-    if int_month < 1 or int_month > 12:
-        print("INVALID MONTH.")
-        sys.exit(1)
-    if len(month) < 2:
-        month = "0" + month
-    _, max_day = cal.monthrange(int_year, int_month)
-    int_day = int(input(f"   Day of the Month (1-{max_day}): "))
-    day = str(int_day)
-    if int_day < 1 or int_day > max_day:
-        print("INVALID DAY OF THE MONTH.")
-        sys.exit(1)
-    if len(day) < 2:
-        day = "0" + day
+    day: str = ""
+    month: str = ""
+    year: str = ""
+
+    vs_str: str = ""
+
+    move_on: bool = False
+
+    while not move_on:
+        year = input("   Year: ")
+        try:
+            int_year = int(year)
+        except ValueError:
+            pass
+
+        if int_year < 1950 or int_year > 2100:
+            print("INVALID YEAR. (4 digits)\n")
+        else:
+            move_on = True
+
+    move_on = False
+    while not move_on:
+        month = input("   Month (1-12): ")
+
+        try:
+            int_month = int(month)
+        except ValueError:
+            pass
+
+        if len(month) < 2:
+            month = "0" + month
+        if int_month < 1 or int_month > 12:
+            print("INVALID MONTH.\n")
+        else:
+            move_on = True
+
+    move_on = False
+    while not move_on:
+        _, max_day = cal.monthrange(int_year, int_month)
+        day = input(f"   Day of the Month (1-{max_day}): ")
+        try:
+            int_day = int(day)
+        except ValueError:
+            pass
+
+        if len(day) < 2:
+            day = "0" + day
+        if int_day < 1 or int_day > max_day:
+            print("INVALID DAY OF THE MONTH.\n")
+        else:
+            move_on = True
 
     print()
-    home = input("   (H)ome or (A)way? ")
-    if home.lower() == "h":
-        vs_str = "vs"
-    elif home.lower() == "a":
-        vs_str = "at"
-    else:
-        print("INVALID RESPONSE. PLEASE SELECT H OR A.")
-        sys.exit(1)
+    move_on = False
+    while not move_on:
+        home = input("   (H)ome or (A)way? ")
+        if home.lower() == "h":
+            vs_str = "vs"
+            move_on = True
+        elif home.lower() == "a":
+            vs_str = "at"
+            move_on = True
+        else:
+            print("INVALID RESPONSE. PLEASE SELECT H OR A.\n")
 
     print()
     city = input("   Opponent: ")
@@ -356,7 +423,13 @@ def prompt_for_filename(basketball: bool = True) -> str:
     city = city.replace(" ", "")
 
     if basketball:
-        if int_month <= 7:
+        # in 2020, COVID destroyed the world (and the NBA season dates)
+        if int_year == 2020:
+            last_month_of_season = 11
+        else:
+            last_month_of_season = 7
+
+        if int_month <= last_month_of_season:
             prefix = "1"
             season = str(int_year)
         else:
