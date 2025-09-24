@@ -20,6 +20,7 @@ from typing import Self
 
 from .configuration import load_config, AudioCfg
 
+MIN_BUFFER_IN_SECS: float = 2.5
 
 class SdAttr(str, enum.Enum):
     """Sound device Attribute constants"""
@@ -122,6 +123,9 @@ class AudioInput:
 
     def alsaaudio_listen(self) -> None:
         log.info("alsaaudio-capture-thread has started.")
+        padded_buffer_size: int = self.buffer_size
+        if self.seconds_of_buffer < MIN_BUFFER_IN_SECS:
+            padded_buffer_size = int(MIN_BUFFER_IN_SECS * self.sample_rate)
 
         # mode can be aa.PCM_NONBLOCK
         audio_stream = aa.PCM(device=self.audio_device_name,
@@ -130,7 +134,7 @@ class AudioInput:
                               rate=self.sample_rate,
                               channels=self.channels,
                               format=aa.PCM_FORMAT_S16_LE,
-                              periodsize=self.buffer_size,
+                              periodsize=padded_buffer_size,
                               periods=1
                               )
 
