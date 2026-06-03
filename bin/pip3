@@ -1,4 +1,4 @@
-#!/home/jeff/git/pyvr/bin/python3
+#!/home/jeff/git/pyvr/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

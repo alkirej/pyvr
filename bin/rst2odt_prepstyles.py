@@ -1,4 +1,4 @@
-#!/home/jeff/git/pyvr/bin/python3.11
+#!/home/jeff/git/pyvr/bin/python
 
 # Copyright: This module has been placed in the public domain.
 

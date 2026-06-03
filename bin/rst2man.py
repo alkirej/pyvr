@@ -1,4 +1,4 @@
-#!/home/jeff/git/pyvr/bin/python3.11
+#!/home/jeff/git/pyvr/bin/python
 
 # Author:
 # Contact: grubert@users.sf.net

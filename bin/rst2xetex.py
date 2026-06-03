@@ -1,4 +1,4 @@
-#!/home/jeff/git/pyvr/bin/python3.11
+#!/home/jeff/git/pyvr/bin/python
 
 # $Id: rst2xetex.py 9115 2022-07-28 17:06:24Z milde $
 # Author: Guenter Milde
