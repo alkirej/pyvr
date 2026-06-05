@@ -12,7 +12,7 @@ numpy==1.26.1
 opencv-python==4.8.1.78
 packaging==23.2
 pyalsaaudio==0.10.0
-# PyAudio==0.2.13
+pyaudio==0.2.14
 pycparser==2.21
 pyee==11.0.1
 Pygments==2.20.0
