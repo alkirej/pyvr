@@ -10,7 +10,7 @@ import msutils as msu
 
 from .AudioPlayer import AudioPlayer
 from .AudioRecorder import AudioInput, AudioRecorder
-from .configuration import load_config, PreviewCfg
+from .configuration import load_config, load_audio_config, load_preview_config, PreviewCfg
 from .VideoRecorder import VideoCard, VideoRecorder
 from .VideoPlayer import VideoPlayer
 

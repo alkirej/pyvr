@@ -56,7 +56,52 @@ class PreviewCfg(str, enum.Enum):
 
 
 # LOAD CONFIGURATION
-def load_config() -> (dict, dict):
+def load_audio_config() -> dict:
+    """
+    Throws KeyError
+    """
+
+    config = cp.ConfigParser()
+    config.read("pyvr.ini")
+
+    log.debug("Load [AUDIO] section from pyvr.ini")
+    # LOAD EACH SECTION AND ENSURE REQUIRED VALUES WERE PROVIDED
+    audio_config = config["AUDIO"]
+    ensure_exists(audio_config[AudioCfg.DEVICE_NAME])
+    audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
+    audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
+    audio_config.setdefault(AudioCfg.SYNC_PLAYER, "")
+    audio_config.setdefault(AudioCfg.SAMPLE_RATE, "0")
+    audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0")
+
+    if audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("n") \
+            or audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("f"):
+        audio_config[AudioCfg.SYNC_PLAYER] = ""
+
+    if audio_config[AudioCfg.AUDIO_LIBRARY].lower() == "alsaaudio":
+        ensure_exists(audio_config[AudioCfg.CHANNEL_COUNT])
+
+    return audio_config
+
+
+def load_preview_config() -> dict:
+    """
+    Throws KeyError
+    """
+    config = cp.ConfigParser()
+    config.read("pyvr.ini")
+
+    log.debug("Load [PREVIEW] section from pyvr.ini")
+    preview_config = config["PREVIEW"]
+    ensure_exists(preview_config[PreviewCfg.INTERVAL])
+    preview_config.setdefault(PreviewCfg.PLAYER_SCALE, "100")
+    preview_config.setdefault(PreviewCfg.WIDTH, "1280")
+    preview_config.setdefault(PreviewCfg.HEIGHT, "720")
+
+    return preview_config
+
+
+def load_config() -> (dict, dict, dict):
     """
     Load pyvr.ini from the local directory and massage data to be used by the recorder.
     :returns: 2 dictionaries of configuration data.  The first is for the audio
@@ -71,22 +116,7 @@ def load_config() -> (dict, dict):
     config.read("pyvr.ini")
 
     try:
-        log.debug("Load [AUDIO] section from pyvr.ini")
-        # LOAD EACH SECTION AND ENSURE REQUIRED VALUES WERE PROVIDED
-        audio_config = config["AUDIO"]
-        ensure_exists(audio_config[AudioCfg.DEVICE_NAME])
-        audio_config.setdefault(AudioCfg.SECS_OF_BUFFER, "1")
-        audio_config.setdefault(AudioCfg.AUDIO_LIBRARY, "PyAudio")
-        audio_config.setdefault(AudioCfg.SYNC_PLAYER, "")
-        audio_config.setdefault(AudioCfg.SAMPLE_RATE, "0")
-        audio_config.setdefault(AudioCfg.PRE_START_DELAY, "0")
-
-        if audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("n") \
-                or audio_config[AudioCfg.SYNC_PLAYER].lower().startswith("f"):
-            audio_config[AudioCfg.SYNC_PLAYER] = ""
-
-        if audio_config[AudioCfg.AUDIO_LIBRARY].lower() == "alsaaudio":
-            ensure_exists(audio_config[AudioCfg.CHANNEL_COUNT])
+        audio_config = load_audio_config()
 
         log.debug("Load [VIDEO] section from pyvr.ini")
         video_config = config["VIDEO"]
@@ -97,12 +127,7 @@ def load_config() -> (dict, dict):
         ensure_exists(video_config[VideoCfg.CODEC])
         video_config.setdefault(VideoCfg.PRE_START_DELAY, "0.0")
 
-        log.debug("Load [PREVIEW] section from pyvr.ini")
-        preview_config = config["PREVIEW"]
-        ensure_exists(preview_config[PreviewCfg.INTERVAL])
-        ensure_exists(preview_config[PreviewCfg.WIDTH])
-        ensure_exists(preview_config[PreviewCfg.HEIGHT])
-        preview_config.setdefault(PreviewCfg.PLAYER_SCALE, "100")
+        preview_config = load_preview_config()
 
     except KeyError as ke:
         print()

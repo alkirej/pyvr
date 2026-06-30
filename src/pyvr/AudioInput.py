@@ -18,7 +18,7 @@ import time
 
 from typing import Self
 
-from .configuration import load_config, AudioCfg
+from .configuration import load_audio_config, AudioCfg
 
 MIN_BUFFER_IN_SECS: float = 2.5
 
@@ -62,15 +62,17 @@ class AudioInput:
         log.info("Setting up audio input device configuration parameters.")
 
         # CONFIGURE/SETUP FOR THE AUDIO INPUT DEVICE (AKA: MICROPHONE)
-        audio_config, _, _ = load_config()
+        audio_config = load_audio_config()
 
         audio_library_name: str = audio_config[AudioCfg.AUDIO_LIBRARY]
         assert (audio_library_name.lower() == "pyaudio" or audio_library_name.lower() == "alsaaudio")
         self.audio_lib: str = audio_library_name.lower()
         if self.audio_lib == "pyaudio":
             self.thread_target = self.pyaudio_listen
+            log.info("Using pyaudio libraries")
         else:
             self.thread_target = self.alsaaudio_listen
+            log.info("Using alsaaudio libraries")
 
         self.seconds_of_buffer: float = float(audio_config[AudioCfg.SECS_OF_BUFFER])
         self.pre_start_delay: float = float(audio_config[AudioCfg.PRE_START_DELAY])
