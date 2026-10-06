@@ -128,6 +128,7 @@ def combine_video_and_audio(video_file: str, audio_file: str, resulting_file: st
             "-c:v", "libx265",  # video codec (hevc/h.265)
             "-c:a", "ac3",  # audio codec (aac)
             "-threads", "1",
+            "-metadata:s:a:0", "title=English",
             resulting_file  # output file name
         ]
 
