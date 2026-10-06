@@ -51,7 +51,9 @@ class VideoCard:
         self.fps: int = int(video_config[VideoCfg.FPS])
         self.time_to_sleep: float = (1.0 / self.fps) / 3
 
-        self.vid_source: cv2.VideoCapture = cv2.VideoCapture(self.device)
+        self.vid_source: cv2.VideoCapture = cv2.VideoCapture(self.device, cv2.CAP_V4L2)
+        self.codec = cv2.VideoWriter_fourcc(*'MJPG')
+        self.vid_source.set(cv2.CAP_PROP_FOURCC, self.codec)
         self.vid_source.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
         self.vid_source.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
 
@@ -62,6 +64,7 @@ class VideoCard:
 
         log.debug(f"    - device = {self.device}")
         log.debug(f"    - size   = {self.width} x {self.height}")
+        log.debug(f"    - fps    = {self.fps}")
 
     def start_viewing(self) -> None:
         """
